@@ -183,7 +183,7 @@ class BuoysEWDM(object):
 
     
     
-    def estimatee_wavelet_power(self):
+    def estimate_wavelet_power(self):
         if "surface_elevation" in self.dataset:
             return cwt(
                 self.dataset["surface_elevation"],
@@ -332,7 +332,7 @@ class BuoysEWDM(object):
             self.theta = self.theta_from_displacements()
         elif self.use == "velocities":
             self.theta = self.theta_from_velocities()
-        elif use == "accelerations":
+        elif self.use == "accelerations":
             self.theta = self.theta_from_accelerations()
         else:
             raise Exception(

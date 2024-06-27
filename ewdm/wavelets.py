@@ -32,9 +32,9 @@ class Morlet(object):
         self.name = 'Morlet'
 
     def _set_f0(self, f0):
-        """Sets the Morlet wave number, the degrees of freedom and the
-        empirically derived factors for the wavelet bases C_{\delta},
-        \gamma, \delta j_0 (Torrence and Compo, 1998, Table 2)
+        """
+        Sets the Morlet wave number, the degrees of freedom and the
+        empirically derived factors for the wavelet bases 
         """
         self.f0 = f0             # Wave number
         self.dofmin = 2          # Minimum degrees of freedom
@@ -104,6 +104,8 @@ def cwt(
     """
 
     assert isinstance(data, xr.DataArray) or isinstance(data, np.ndarray)
+
+    ntime = len(data)
 
     # sampling frequency
     if fs is None:

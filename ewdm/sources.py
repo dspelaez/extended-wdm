@@ -18,8 +18,9 @@ import os
 
 from pathlib import Path
 from typing import Union, Tuple
-from helpers import get_sampling_frequency
-from parameters import VARIABLE_NAMES
+
+from .helpers import get_sampling_frequency
+from .parameters import VARIABLE_NAMES
 
 
 class SpotterBuoysDataSource(object):
@@ -33,8 +34,8 @@ class SpotterBuoysDataSource(object):
             self.fname = Path(fname)
         else:
             raise FileNotFoundError(
-                "File not found. The file in the SDCard is "
-                "normally called `displacement.csv`. Please provide "
+                "File not found. The name of the file in the SDCard is "
+                "likely `displacement.csv`. Please provide "
                 "the full path to this file."
             )
 
@@ -190,15 +191,6 @@ class CDIPDataSourceRealTime(object):
             'calendar': 'proleptic_gregorian'
         }
         return ds
-
-
-
-if __name__ == "__main__":
-    spotter = SpotterBuoysDataSource("../data/displacement.csv")
-    ds_spotter = spotter.read_dataset()
-
-    cdip = CDIPDataSourceRealTime(station_id=189)
-    ds_cdip = cdip.read_dataset(time_start="2024-06-22 08:00")
 
 
 

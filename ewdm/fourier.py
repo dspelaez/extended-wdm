@@ -3,10 +3,7 @@
 # vim:fenc=utf-8
 
 """
-Copyright © 2024 Daniel Santiago <http://github.com/dspelaez>
-Distributed under terms of the GNU/GPL 3.0 license.
-
-@author: Daniel Santiago
+@author: Daniel Peláez-Zapata
 @github: http://github.com/dspelaez
 @created: 2024-03-10
 """
@@ -15,7 +12,7 @@ import xarray as xr
 import numpy as np
 from scipy import signal
 
-from helpers import get_sampling_frequency
+from .helpers import get_sampling_frequency
 
 
 NPERSEG = 256

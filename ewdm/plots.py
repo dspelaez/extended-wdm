@@ -17,8 +17,6 @@ import matplotlib.dates as mdates
 import matplotlib.ticker as mticker
 
 
-class PlotDirectionalSpecrtum():
-    pass
 
 # plot directional wave spectrum {{{
 def _smooth(F, ws=(5, 2)):
@@ -123,7 +121,7 @@ def _get_cmap(colors=None, N=256):
 
 def _add_cbar(
         pc, ax, cax=None, style="outside", ticks=None, orientation="horizontal",
-        label="$\log_{10} E \; \mathrm{[m^2 Hz^{-1} deg^{-1}]}$"
+        label="$\\log_{10} E \\; \\mathrm{[m^2 Hz^{-1} deg^{-1}]}$"
     ):
     """Return a colorbar object"""
 

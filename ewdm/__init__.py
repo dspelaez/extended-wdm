@@ -9,9 +9,9 @@
 """
 
 # from . import fourier
-from . import main
 from . import helpers
 from . import parameters
 from . import plots
 from . import sources
 from . import wavelets
+from .main import BuoysEWDM
