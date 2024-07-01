@@ -2,15 +2,6 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
-"""
-Copyright © 2024 Daniel Santiago <http://github.com/dspelaez>
-Distributed under terms of the GNU/GPL 3.0 license.
-
-@author: Daniel Santiago
-@github: http://github.com/dspelaez
-@created: 2024-03-12
-"""
-
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -120,6 +111,9 @@ class CDIPDataSourceRealTime(object):
         time_delta = np.timedelta64(int(1E9 / fs), 'ns')
         miliseconds = np.arange(len(ds.xyzCount)) * time_delta
         time = ds.xyzStartTime.values + miliseconds
+        self.time = time
+        self.time_coverage_start = ds.time_coverage_start
+        self.time_coverage_end = ds.time_coverage_end
 
         # check if time_start is passed otherwise use first time 
         if time_start is None:
@@ -153,7 +147,9 @@ class CDIPDataSourceRealTime(object):
             )
         except IndexError:
             raise Exception(
-                "`time_start` and `time_end` couldn't be found in the dataset."
+                f"`time_start` and `time_end` couldn't be found in the dataset. "
+                f"This dataset covers from {self.time_coverage_start} to "
+                f"{self.time_coverage_end}."
             )
 
 

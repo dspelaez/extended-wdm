@@ -2,12 +2,6 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
-"""
-@author: Daniel Santiago
-@github: http://github.com/dspelaez
-@created: 2024-06-24
-"""
-
 # physical parameters
 GRAV = 9.8
 

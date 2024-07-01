@@ -2,12 +2,6 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
-"""
-@author: Daniel Peláez-Zapata
-@github: http://github.com/dspelaez
-@created: 2024-03-09
-"""
-
 import numpy as np
 import xarray as xr
 
@@ -96,8 +90,7 @@ def cwt(
         freqs (np.ndarray): Frequency array.
         fs (float): Sampling frequency. Default is 2 * freqs[-1].
         mother (Morlet): Mother wavelet class. Default is Morlet(6.).
-        normalise (bool): Whether to normalise the signal
-            variance. Default is False.
+        normalise (bool): Whether to normalise the signal variance.
 
     Returns:
         xr.DataArray: Continuous wavelet transform of the input signal.
@@ -120,8 +113,8 @@ def cwt(
     # normalise with signal variance
     if normalise:
         signal_std = data.std().item()
-        data = data.pipe(lambda x: (x - x.mean()) / x.std())
-
+        data = (data - data.mean()) / data.std()
+            
     # fourier frequencies and fourier transform of signal
     fft = np.fft.fft(data)
     omega = 2*np.pi * np.fft.fftfreq(ntime, 1./fs)
@@ -131,7 +124,7 @@ def cwt(
     w = np.sqrt(s * omega[1] * ntime) * mother.psi_ft(s * omega)
 
     # convolve window and transformed series
-    # fac = np.sqrt(2 / fs / mother.flambda) # (?)
+    # fac = np.sqrt(2 / fs / mother.flambda)
     W = np.fft.ifft(fft[None,:] * w, ntime)
 
     # finally try to compute time array

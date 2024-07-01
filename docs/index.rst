@@ -3,6 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. image:: _static/logo_squared.png
+   :width: 250 px
+   :align: right
+
 Welcome to extended-wdm's documentation!
 ========================================
 
@@ -10,6 +14,18 @@ Welcome to extended-wdm's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   getting_started
+   maths
+   examples
+
+
+API Documentation
+=================
+
+.. toctree::
+   :maxdepth: 4
+
+   ewdm
 
 
 Indices and tables

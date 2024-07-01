@@ -2,12 +2,6 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
-"""
-@author: Daniel Santiago
-@github: http://github.com/dspelaez
-@created: 2021-02-18
-"""
-
 import xarray as xr
 import numpy as np
 import scipy.signal as signal
@@ -16,26 +10,21 @@ import matplotlib.colors as mcolors
 import matplotlib.dates as mdates
 import matplotlib.ticker as mticker
 
+from typing import Union, Tuple
 
 
 # plot directional wave spectrum {{{
-def _smooth(F, ws=(5, 2)):
+def _smooth(E, ws=(5, 2)):
     """Applies a simple circular smoothing to 2D array.
 
-    This function takes as an argument the directional spectrum or
-    another 2d function and apply a simple moving average with
-    dimensions given by winsize.
+    Args:
+        E (ndarray): Input function.
+        ws (tuple): Window size. For example, for a directional spectrum
+            size E(360,64) and ws=(10,2), the filter acts averaging
+            10 directions and 2 frequencies.
 
-    For example, if a we have a directional spectrum E(360,64) and
-    ws=(10,2) the filter acts averging 10 directiona and 2 frequencies.
-
-    Input:
-        F  : Input function
-        ws : Windows size
-
-    Output:
-        F_smoothed : Function smoothed
-
+    Returns:
+        ndarray: Function smoothed.
     """
 
     # define window
@@ -50,13 +39,28 @@ def _smooth(F, ws=(5, 2)):
     window = window / window.sum()
 
     # permorm convolution and return output
-    return signal.convolve2d(F, window, mode='same', boundary='wrap')
+    return signal.convolve2d(E, window, mode='same', boundary='wrap')
 
 def _get_axes(
         ax=None, rmin=0.1, rmax=0.5, rstep=0.1, angle=-135,
-        color="0.8", is_period=False
+        color="0.8", as_period=False
     ):
-    """Draw polar grid on spectific axes"""
+    """Draw polar grid on specific axes.
+
+    Args:
+        ax (matplotlib.axes, optional): Axes object to draw the grid on.
+            If None, a new figure and axes are created.
+        rmin (float, optional): Minimum radius for the grid. Defaults to 0.1.
+        rmax (float, optional): Maximum radius for the grid. Defaults to 0.5.
+        rstep (float, optional): Step size for the radius. Defaults to 0.1.
+        angle (int, optional): Angle for the radius labels. Defaults to -135.
+        color (str, optional): Color of the grid lines and labels. Defaults to "0.8".
+        as_period (bool, optional): If True, labels are formatted as wave periods.
+            Defaults to False.
+
+    Returns:
+        tuple: A tuple containing the figure and axes objects if a new figure is created. Otherwise, returns None.
+    """
 
     if ax is None:
         fig, ax = plt.subplots(1, figsize=(5,5))
@@ -70,7 +74,7 @@ def _get_axes(
         )
         ax.add_artist(circle)
         if radii <= rmax:
-            if is_period:
+            if as_period:
                 radii_label = f"{1/radii:.1f}"
             else:
                 radii_label = f"{radii:.2f}"
@@ -94,7 +98,7 @@ def _get_axes(
 
     ax.set_xticklabels([])
     ax.set_yticklabels([])
-    if is_period:
+    if as_period:
         ax.set_ylabel("Wave period [s]")
     else:
         ax.set_ylabel("$f$ [Hz]")
@@ -109,13 +113,18 @@ def _get_axes(
 
 
 def _get_cmap(colors=None, N=256):
-    """Return colormap for a given color list"""
+    """Return colormap for a given color list.
+
+    Args:
+        colors (list): List of colours.
+        N (int): Number of colours
+
+    Returns:
+        Colormap object. If not colors passed, it returns viridis with white bottom.
+
+    """
 
     if colors is None:
-        # colors = [
-            # "#FFFFFF", "#3A87E9", "#05254D", "#3B528BFF",
-            # "#21908CFF", "#5DC963FF", "#FDE725FF"
-        # ]
         colors = [(1, 1, 1), *plt.cm.viridis(np.linspace(0, 1, 8))]
     return mcolors.LinearSegmentedColormap.from_list('cmap', colors, N=N)
 
@@ -166,14 +175,60 @@ def _add_wind_info(ax, wspd, wdir, color="k", wind_sea_radius=True):
         ax.add_artist(circle)
 
 
-def plot_directional_spectrum(
-        da: xr.DataArray, frqs="frequency", dirs="direction", ax=None,
-        smooth=None, cmap=None, levels=30, vmin=None, vmax=None, contours=None,
-        colorbar=False, wspd=None, wdir=None, wind_sea_radius=None,
-        curspd=None, curdir=None, cbar_kw={}, axes_kw={}
-    ):
-    """Make a simple plot of a direcitonal wave spectrum"""
+#def plot_directional_spectrum(
+#        da: xr.DataArray, frqs="frequency", dirs="direction", ax=None,
+#        smooth=None, cmap=None, levels=30, vmin=None, vmax=None, contours=None,
+#        colorbar=False, wspd=None, wdir=None, wind_sea_radius=None,
+#        curspd=None, curdir=None, cbar_kw={}, axes_kw={}
+#    ):
+#    """Make a simple plot of a direcitonal wave spectrum"""
 
+def plot_directional_spectrum(
+        da: Union[xr.DataArray, np.ndarray],
+        frqs: Union[str, np.ndarray] = "frequency",
+        dirs: Union[str, np.ndarray] = "direction",
+        ax = None,
+        smooth = None,
+        cmap = None,
+        levels: int = 30,
+        vmin: Union[float, int] = None,
+        vmax: Union[float, int] = None,
+        contours: Union[float, int] = None,
+        colorbar: bool = False,
+        wspd: Union[float, int] =None,
+        wdir: Union[float, int] =None,
+        wind_sea_radius: Union[float, int] = None,
+        curspd: Union[float, int] = None,
+        curdir: Union[float, int] = None,
+        cbar_kw={},
+        axes_kw={}
+    ) -> None:
+    """
+    Make a simple plot of a directional wave spectrum.
+
+    Args:
+        da: Directional spectrum data.
+        frqs: Frequency label name or numpy array.
+        dirs: Direction label name or numpy array.
+        ax (optional): Matplotlib axis object.
+        smooth (tuple): Smoothing factor for visualisation. Defaults to None.
+        cmap (optional): Colormap for the plot. Defaults to None.
+        levels (int): Number of contour levels. Defaults to 30. If None, pseudo-color plot is made.
+        vmin (int or float): Minimum value for colormap.
+        vmax (int or float]): Maximum value for colormap.
+        contours (int or float): Specific contour levels to plot on top.
+        colorbar (bool): Whether to display colorbar. Defaults to False.
+        wspd (int or float): Wind speed value to draw arrow. Defaults to None.
+        wdir (int or float): Wind direction value in cartesian convention.
+        wind_sea_radius (int or float):Whether to display wind sea separation radius.
+        curspd (int or float): Current speed value.
+        curdir (int or float): Current direction value in cartesian convention.
+        cbar_kw (dict): Additional arguments for colorbar.
+        axes_kw (dict): Additional arguments for plot axes.
+
+    Returns:
+        fig, ax
+    """
     # get axis if not given
     if ax is None:
         fig, ax = _get_axes(**axes_kw)
