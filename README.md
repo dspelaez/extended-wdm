@@ -2,7 +2,7 @@
 
 #  EWDM: Extended Wavelet Directional Method
 
-"Welcome to the GitHub repository for the Extended Wavelet Directional Method
+Welcome to the GitHub repository for the Extended Wavelet Directional Method
 (EWDM) - a toolkit for estimating directional spectra  of ocean waves using the
 Continuous Wavelet Transform (CWT).
 
@@ -94,7 +94,7 @@ plot_directional_spectrum(
 
 This will produce a plot like this:
 
-<img src="notebooks/cdip-example-directional-spectrum.png" width="600">
+<img src="notebooks/cdip-example-directional-spectrum.png" width="500">
 
 
 
