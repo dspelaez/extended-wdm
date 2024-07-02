@@ -2,12 +2,6 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
-"""
-@author: Daniel Peláez-Zapata
-@github: http://github.com/dspelaez
-@created: 2024-03-09
-"""
-
 from setuptools import setup, find_packages
 
 with open("README.md", "r") as fh:
@@ -21,14 +15,15 @@ setup(
     description="EWDM: A package for a wavelet-based directional wave spectra",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/dspelaez/ewdm",
+    url="https://github.com/dspelaez/extended-wdm",
     packages=find_packages(),
     install_requires=[
         "numpy",
         "scipy",
         "xarray",
         "matplotlib",
-        "tqdm"
+        "tqdm",
+        "click"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

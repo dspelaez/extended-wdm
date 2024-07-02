@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'extended-wdm'
+project = 'ewdm'
 copyright = '2024, Daniel Pelaez-Zapata'
 author = 'Daniel Pelaez-Zapata'
 release = '0.1'
