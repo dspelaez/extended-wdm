@@ -22,8 +22,10 @@ setup(
         "scipy",
         "xarray",
         "matplotlib",
+        "bottleneck",
+        "pydap",
+        "netCDF4",
         "tqdm",
-        "click"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
