@@ -17,7 +17,7 @@ from .parameters import VARIABLE_NAMES
 
 RADTODEG = 180. / np.pi
 DEGTORAD = np.pi / 180.
-
+GRAV = 9.8
 
 
 class _BaseClass(object):
@@ -48,6 +48,7 @@ class _BaseClass(object):
         self.max_time_gap = max_time_gap
         self.block_size = block_size
         self.normalise = normalise
+
 
     def interpolate_dataset(self, dataset, max_nan_ratio, max_time_gap):
         """Interpolate dataset if it contanins invalid values
@@ -103,9 +104,46 @@ class Arrays(_BaseClass):
         and directional spreading function.
     """
 
+    @classmethod
+    def from_numpy(
+        cls,
+        time: np.ndarray,
+        surface_elevation: np.ndarray,
+        position_x: np.ndarray,
+        position_y: np.ndarray
+        ):
+        """
+        Create an instance of Arrays from numpy arrays.
+
+        Arguments:
+            surface_elevation: Surface elevation array
+            eastward_displacement: Eastward displacements
+            northward_displacement: Northward displacements
+            eastward_velocities: Eastward velocities
+            northward_velocities: Northward velocities
+            eastward_acceleration: Eastward accelerations
+            northward_acceleration: Northward accelerations
+            time: Time values.
+        """
+        pass
+
+    
+    def wavelet_coefficients(self, dataset: xr.Dataset) -> xr.Dataset:
+        ...
+
+    def array_geometry(self, dataset: xr.Dataset) -> np.ndarray:
+        ...
+    
+    def compute_phase(self, dataset: xr.Dataset) -> xr.Dataset:
+        ...
+
+    def compute_power(self, dataset: xr.Dataset) -> xr.Dataset:
+        ...
 
 
-class Triplets(object):
+
+
+class Triplets(_BaseClass):
     """Perform EWDM for triplet-based data such as wave buoys or ADCPs.
 
     Arguments:
@@ -118,60 +156,34 @@ class Triplets(object):
         displacements, velocities or accelerations. Sea surface elevation should
         be provided in all cases. The convention followed for variable names is:
 
-        .. code-block:: python
+            .. code-block:: python
 
-            <xarray.Dataset>
-            Dimensions:                 (time)
-            Coordinates:
-              * time                    (time) datetime64[ns]
-            Data variables:
-                eastward_displacement   (time) float32
-                northward_displacement  (time) float32
-                surface_elevation       (time) float32
-                eastward_velocity       (time) float32
-                northward_velocity      (time) float32
-                eastward_acceleration   (time) float32
-                northward_acceleration  (time) float32
-                eastward_slope          (time) float32
-                northward_slope         (time) float32
-            Attributes: (1/1)
-                sampling_rate:           2.5
+                <xarray.Dataset>
+                Dimensions:                 (time)
+                Coordinates:
+                  * time                    (time) datetime64[ns]
+                Data variables:
+                    eastward_displacement   (time) float32
+                    northward_displacement  (time) float32
+                    surface_elevation       (time) float32
+                    eastward_velocity       (time) float32
+                    northward_velocity      (time) float32
+                    eastward_acceleration   (time) float32
+                    northward_acceleration  (time) float32
+                    eastward_slope          (time) float32
+                    northward_slope         (time) float32
+                Attributes: (1/1)
+                    sampling_rate:           2.5
 
     Returns:
         xr.Dataset: Dataset containing produced directional spectra
         and directional spreading function.
     """
 
-    def __init__(
-            self,
-            dataset: xr.Dataset,
-            fs: float = None,
-            interpolate: bool = True,
-            max_nan_ratio: float = 0.1,
-            max_time_gap: str = "10s",
-            block_size: str = "30min",
-            normalise: bool = True
-        ) -> xr.Dataset:
-        """Initialise class"""
-        
-        self.dataset = dataset
-        if fs is None:
-            try:
-                self.fs = self.dataset.sampling_rate
-            except AttributeError:
-                self.fs = get_sampling_frequency(self.dataset["time"])
-        else:
-            self.fs = fs
-
-        self.interpolate = interpolate
-        self.max_nan_ratio = max_nan_ratio
-        self.max_time_gap = max_time_gap
-        self.block_size = block_size
-        self.normalise = normalise
-
 
     @classmethod
-    def from_numpy(cls,
+    def from_numpy(
+        cls,
         time: np.ndarray,
         surface_elevation: np.ndarray,
         eastward_displacement: np.ndarray = None,
@@ -182,9 +194,9 @@ class Triplets(object):
         northward_acceleration: np.ndarray = None,
     ):
         """
-        Create an instance of BuoyEWDM from numpy arrays.
+        Create an instance of Arrays from numpy arrays.
 
-        Args:
+        Arguments:
             surface_elevation: Surface elevation array
             eastward_displacement: Eastward displacements
             northward_displacement: Northward displacements
@@ -410,7 +422,6 @@ class Triplets(object):
                 "slopes because required variables are not "
                 "available in the dataset."
             )
-
 
 
     def estimate_directional_distribution(self, dataset) -> xr.Dataset:

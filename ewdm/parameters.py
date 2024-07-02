@@ -101,5 +101,15 @@ VARIABLE_NAMES = {
         'standard_name': 'sea_surface_wave_up_gyro',
         'long_name': 'Wave-induced upward gyro',
         'units': 's^-1'
+    },
+    'position_x': {
+        'standard_name': 'position_x_wave_array',
+        'long_name': 'Coordinate x of wave array element (eastward)',
+        'units': 'm'
+    },
+    'position_y': {
+        'standard_name': 'position_y_wave_array',
+        'long_name': 'Coordinate y of wave array element (northward)',
+        'units': 'm'
     }
 }

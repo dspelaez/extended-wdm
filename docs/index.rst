@@ -3,12 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. image:: _static/logo_squared.png
-   :width: 250 px
+.. image:: _static/logo.png
+   :width: 200 px
    :align: right
 
-Welcome to extended-wdm's documentation!
-========================================
+Welcome to extended-wdm package documentation!
+==============================================
+
+*Python toolkit for estimating directional wave spectra of ocean waves*
+
+
+
+.. note::
+   This is an experimental version.
 
 .. toctree::
    :maxdepth: 2

@@ -8,7 +8,7 @@ import xarray as xr
 from scipy.signal import welch
 from matplotlib import pyplot as plt
 
-from ewdm import Triplets, Arrays
+import ewdm
 from ewdm.sources import CDIPDataSourceRealTime, SpotterBuoysDataSource
 from ewdm.plots import plot_directional_spectrum
 plt.ion()
@@ -17,15 +17,16 @@ plt.ion()
 if True:
     cdip =  CDIPDataSourceRealTime(166)
     dataset = cdip.read_dataset(time_start='2024-06-09T08:30')
-    spec = Triplet(dataset)
+    spec = ewdm.Triplets(dataset)
     output = spec.compute(
         omin=-5, omax=0, nvoice=16, dd=5, kappa=36, use="displacements"
     )
 
     fig, ax = plt.subplots()
     plot_directional_spectrum(
-        output.directional_distribution, ax=ax,
-        levels=None, colorbar=True, axes_kw={"rmax": 0.5, "as_period": True}
+        output.directional_spectrum.pipe(np.log10), ax=ax, vmin=-3, vmax=-1,
+        levels=None, colorbar=False, contours=3,
+        axes_kw={"rmax": 0.35, "as_period": False}
     )
 
     fourier_freq, fourier_power = welch(
