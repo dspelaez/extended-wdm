@@ -1,4 +1,4 @@
-<img src="image_url" width="200">
+<img src="docs/_static/logo.png" width="400">
 
 # :sparkles: :ocean: Extended Wavelet Directional Method (EWDM) :ocean: :sparkles:
 
