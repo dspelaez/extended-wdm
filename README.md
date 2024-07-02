@@ -72,11 +72,10 @@ estimate the directional wave spectrum.
 ```python
 import numpy as np
 import xarray as xr
-from scipy.signal import welch
 from matplotlib import pyplot as plt
 
 import ewdm
-from ewdm.sources import CDIPDataSourceRealTime, SpotterBuoysDataSource
+from ewdm.sources import CDIPDataSourceRealTime
 from ewdm.plots import plot_directional_spectrum
 plt.ion()
 
