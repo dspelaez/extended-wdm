@@ -86,8 +86,7 @@ output = spec.compute()
 
 fig, ax = plt.subplots()
 plot_directional_spectrum(
-    output["directional_spectrum"], ax=ax,
-    levels=None, colorbar=False, contours=3,
+    output["directional_spectrum"], ax=ax, levels=None
 )
 ```
 
