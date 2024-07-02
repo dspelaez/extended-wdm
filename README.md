@@ -98,5 +98,5 @@ This will produce a plot like this:
 
 ## Further examples
 
-Consult the full documentation on [](extended-wdm.readthedocs.io/)
+Consult the full documentation on [extended-wdm.readthedocs.io/](extended-wdm.readthedocs.io/)
 
