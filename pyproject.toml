@@ -2,10 +2,7 @@
 name = "ewdm"
 version = "0.1"
 authors = [
-  {
-    name="Daniel Peláez-Zapata",
-    email="daniel.pealez-zapata@ucdconnect.ie"
-  },
+  {name = "Daniel Peláez-Zapata", email="daniel.pelaez-zapata@ucdconnect.ie"},
 ]
 description = "EWDM: A package for a wavelet-based directional wave spectra"
 readme = "README.md"
@@ -20,7 +17,6 @@ dependencies = [
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU License",
     "Operating System :: OS Independent",
 ]
 
