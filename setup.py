@@ -6,7 +6,6 @@ from setuptools import setup, find_packages
 
 setup(
     name="ewdm",
-    version="0.2",
     author="Daniel Peláez-Zapata",
     author_email="daniel.pelaez-zapata@ucdconnect.ie",
     description="EWDM: A package for a wavelet-based directional wave spectra",
