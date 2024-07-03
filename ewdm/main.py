@@ -29,7 +29,6 @@ class _BaseClass(object):
             interpolate: bool = True,
             max_nan_ratio: float = 0.1,
             max_time_gap: str = "10s",
-            block_size: str = "30min",
             normalise: bool = True
         ) -> xr.Dataset:
         """Initialise class"""
@@ -46,7 +45,6 @@ class _BaseClass(object):
         self.interpolate = interpolate
         self.max_nan_ratio = max_nan_ratio
         self.max_time_gap = max_time_gap
-        self.block_size = block_size
         self.normalise = normalise
 
 
@@ -388,7 +386,7 @@ class Triplets(_BaseClass):
             )
 
 
-    def theta_from_slopes(self):
+    def theta_from_slopes(self, dataset):
         """Compute local wave direction from wave slopes.
 
         This method calculates the local wave direction using the eastward and
@@ -475,6 +473,7 @@ class Triplets(_BaseClass):
             dd: float = 5.0,
             kappa: float = 36.0,
             use: str = "displacements",
+            block_size: str = "30min",
         ) -> xr.Dataset:
         """Perform computation using specified parameters.
 
@@ -494,6 +493,11 @@ class Triplets(_BaseClass):
             use (str, optional): Type of data to perform estimation.
                 It should be should be either `displacements`, `velocities`
                 or `accelerations`." (default is "displacements").
+            block_size (str): If dataset contains more than one hour of data,
+                split dataset into blocks of `block_size` and perform
+                computation over each block. The resulting output will have a
+                time dimension. It is advisable to choose values of no more than
+                half-hour. Default `block_size="30min"`.
 
         Returns:
             xr.Dataset: Dataset containing the directional spectrum, directional
@@ -517,6 +521,7 @@ class Triplets(_BaseClass):
 
         # data used for estimation
         self.use = use
+        self.block_size = block_size
 
         # determine length of time series
         # if dataset contains more than one hour of data, it will be splitted
