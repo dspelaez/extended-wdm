@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/extended-wdm/badge/?version=latest)](https://extended-wdm.readthedocs.io/en/latest/?badge=latest)
+
 <img src="docs/_static/logo.png" width="400">
 
 # EWDM: Extended Wavelet Directional Method
