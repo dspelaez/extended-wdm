@@ -57,8 +57,8 @@ def estimate_directional_distribution(power, theta, dd, kappa):
     # return dataset
     output_ds = xr.Dataset(
         data_vars = {
-            "directional_spectrum": (["frequency", "direction"], E),
-            "directional_distribution": (["frequency", "direction"], D),
+            "directional_spectrum": (["frequency", "direction"], E.data),
+            "directional_distribution": (["frequency", "direction"], D.data),
             "frequency_spectrum": (["frequency"], S)
         },
         coords = {

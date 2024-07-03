@@ -1,0 +1,44 @@
+[project]
+name = "ewdm"
+version = "0.2"
+authors = [
+  {name = "Daniel Peláez-Zapata", email="daniel.pelaez-zapata@ucdconnect.ie"},
+]
+description = "EWDM: A package for a wavelet-based directional wave spectra"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "pandas",
+    "xarray",
+    "pydap",
+    "netCDF4",
+    "bottleneck",
+    "tqdm",
+    "requests",
+]
+
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+"documentation" = "https://extended-wdm.readthedocs.io/en/latest/"

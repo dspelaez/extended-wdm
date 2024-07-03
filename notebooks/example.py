@@ -18,8 +18,9 @@ if True:
     spotter = SpotterBuoysDataSource("../data/displacements.csv")
     dataset = spotter.read_dataset()
     spec = ewdm.Triplets(dataset)
+    spec.compute_velocities()
     output = spec.compute(
-        omin=-5, omax=0, nvoice=16, dd=5, kappa=36, use="displacements"
+        omin=-5, omax=0, nvoice=16, dd=5, kappa=36, use="velocities"
     )
     output = spec.compute()
 
@@ -54,33 +55,4 @@ if False:
     ax.loglog(fourier_freq, fourier_power, label="Fourier-based")
     output.frequency_spectrum.plot(ax=ax, ls="--", label="Wavelet-based")
     ax.legend()
-
-
-# groups = dataset.resample(time="60min")
-# results = (
-    # BuoysEWDM(subset)
-    # .compute(use="displacements")
-    # .expand_dims({"time": [time]})
-    # for time, subset in groups if len(subset["time"]) > 1
-# )
-# a1 = xr.concat(results, dim="time")
-
-# for i in range(0,24,3):
-    # print(i)
-    # plot_directional_spectrum(
-        # a1.isel(time=i).directional_distribution, dirs="direction", frqs="frequency",
-        # levels=None, colorbar=True, axes_kw={"rmax": 0.5, "is_period": True}
-    # )
-
-# a2=spec.compute(use="velocities")
-# a3=spec.compute(use="accelerations")
-
-# plot_directional_spectrum(
-    # a2.directional_distribution, dirs="direction", frqs="frequency",
-    # levels=None, colorbar=True, axes_kw={"rmax": 0.5, "is_period": True}
-# )
-
-# plot_directional_spectrum(
-    # a3.directional_distribution, dirs="direction", frqs="frequency",
-    # levels=None, colorbar=True, axes_kw={"rmax": 0.5, "is_period": True}
-# )
+    plt.savefig("cdip-fourer-vs-wavelet.png")

@@ -46,17 +46,25 @@ class SpotterBuoysDataSource(object):
         data_cols = [col for col in variables]
         columns = ['year','month','day','hour','min','sec','msec'] + data_cols
         
-        #date parser
-        fmt = "%Y %m %d %H %M %S %f"
-        parser = lambda t: pd.Timestamp(
-            *map(int,t.split()[:-1]), int(t.split()[-1])*1000
-        )
-
-        # load data
+        # load data (deprecated)
+        # fmt = "%Y %m %d %H %M %S %f"
+        # parser = lambda t: pd.Timestamp(
+            # *map(int,t.split()[:-1]), int(t.split()[-1])*1000
+        # )
+        # data = pd.read_csv(
+            # self.fname, names=columns, header=None, skiprows=1,
+            # parse_dates={"time": columns[:7]}, date_parser=parser
+        # )
+        # read the CSV file without parsing date
         data = pd.read_csv(
-            self.fname, names=columns, header=None, skiprows=1,
-            parse_dates={"time": columns[:7]}, date_format=parser
+            self.fname, names=columns, header=None, skiprows=1
         )
+        # combine the desired date-time columns and convert them to datetime
+        data["time"] = pd.to_datetime(
+            data[columns[:7]].astype(str).agg(','.join, axis=1),
+            format="%Y,%m,%d,%H,%M,%S,%f"
+        )
+        data = data.drop(columns=columns[:7])
 
         # convert to xarray and add metadata
         ds = data.set_index("time").to_xarray()
