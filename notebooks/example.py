@@ -19,7 +19,7 @@ plt.ion()
 # HERE = os.path.dirname(os.path.abspath(__file__))
 # SPOTTER_FILE = os.path.join(HERE, "../data/displacement.csv")
 
-if False:
+try:
     spotter = SpotterBuoysDataSource("../data/displacement.csv")
     dataset = spotter.read_dataset()
     spec = ewdm.Triplets(dataset)
@@ -41,8 +41,12 @@ if False:
         ax.set_title(tt.dt.strftime("%Y-%m-%d %H:%M:%S").item())
     plt.savefig("spotter-example-directional-spectrum.png")
 
+    print("Spotter working OK")
+except:
+    print("Spotter not working")
 
-if True:
+
+try:
     cdip =  CDIPDataSourceRealTime(166)
     dataset = cdip.read_dataset(time_start='2024-06-09T08:30')
     spec = ewdm.Triplets(dataset)
@@ -65,3 +69,6 @@ if True:
     output.frequency_spectrum.plot(ax=ax, ls="--", lw=2, label="Wavelet-based")
     ax.legend()
     plt.savefig("cdip-fourier-vs-wavelet-avg-power.png")
+    print("CDIP working OK")
+except:
+    print("CDIP not working")

@@ -3,13 +3,22 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+sys.path.append(
+    os.path.abspath(
+        os.path.join(__file__, "../ewdm")
+    )
+)
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'ewdm'
 copyright = '2024, Daniel Pelaez-Zapata'
 author = 'Daniel Pelaez-Zapata'
-release = '0.1'
+release = '0.3'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
