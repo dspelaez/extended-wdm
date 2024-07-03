@@ -1,7 +1,8 @@
 [![Documentation Status](https://readthedocs.org/projects/extended-wdm/badge/?version=latest)](https://extended-wdm.readthedocs.io/en/latest/?badge=latest)
 [![Python package](https://github.com/dspelaez/extended-wdm/actions/workflows/python-package.yml/badge.svg)](https://github.com/dspelaez/extended-wdm/actions/workflows/python-package.yml)
+[![PyPI version](https://badge.fury.io/py/ewdm.svg)](https://badge.fury.io/py/ewdm)
 
-<img src="docs/_static/logo.png" width="400">
+<img src="https://raw.githubusercontent.com/dspelaez/extended-wdm/main/docs/_static/logo.png" width="400">
 
 # EWDM: Extended Wavelet Directional Method
 
