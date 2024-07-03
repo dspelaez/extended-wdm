@@ -1,0 +1,9 @@
+ numpy
+ scipy
+ pandas
+ xarray
+ matplotlib
+ bottleneck
+ pydap
+ netCDF4
+ tqdm

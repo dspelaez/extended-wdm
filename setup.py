@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="ewdm",
-    version="0.1",
+    version="0.2",
     author="Daniel Peláez-Zapata",
     author_email="daniel.pelaez-zapata@ucdconnect.ie",
     description="EWDM: A package for a wavelet-based directional wave spectra",
@@ -20,6 +20,7 @@ setup(
     install_requires=[
         "numpy",
         "scipy",
+        "pandas",
         "xarray",
         "matplotlib",
         "bottleneck",

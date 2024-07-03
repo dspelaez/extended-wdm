@@ -15,18 +15,18 @@ from .parameters import VARIABLE_NAMES
 
 
 class SpotterBuoysDataSource(object):
-    """Class to handle Spotter buoy data from SDCard"""
+    """Class to handle Spotter buoy data from SD Card"""
 
     def __init__(
             self,
-            fname: str ="displacement.csv",
+            fname: str ="displacements.csv",
         ):
         if os.path.isfile(fname):
             self.fname = Path(fname)
         else:
             raise FileNotFoundError(
-                "File not found. The name of the file in the SDCard is "
-                "likely `displacement.csv`. Please provide "
+                "File not found. The name of the file in the SD Card is "
+                "likely `displacements.csv`. Please provide "
                 "the full path to this file."
             )
 
@@ -55,7 +55,7 @@ class SpotterBuoysDataSource(object):
         # load data
         data = pd.read_csv(
             self.fname, names=columns, header=None, skiprows=1,
-            parse_dates={"time": columns[:7]}, date_parser=parser
+            parse_dates={"time": columns[:7]}, date_format=parser
         )
 
         # convert to xarray and add metadata
