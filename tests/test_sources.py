@@ -11,14 +11,18 @@
 import numpy as np
 import xarray as xr
 import pytest
+import os
 
 from datetime import datetime
 
 from ewdm.sources import SpotterBuoysDataSource, CDIPDataSourceRealTime
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+SPOTTER_FILE = os.path.join(HERE, "../data/displacement.csv")
+
 @pytest.fixture
 def spotter_instance():
-    return SpotterBuoysDataSource("data/displacement.csv")
+    return SpotterBuoysDataSource(SPOTTER_FILE)
 
 @pytest.fixture
 def cdip_instance():

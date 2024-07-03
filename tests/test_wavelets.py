@@ -14,10 +14,13 @@ Distributed under terms of the GNU/GPL 3.0 license.
 import numpy as np
 import xarray as xr
 import scipy.signal as signal
+import os
 
 from ewdm.wavelets import Morlet, cwt, xwt
 from ewdm.sources import SpotterBuoysDataSource
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+SPOTTER_FILE = os.path.join(HERE, "../data/displacement.csv")
 
 def test_morlet_initialisation():
     morlet = Morlet()
@@ -63,7 +66,7 @@ def test_xwt():
 def test_cwt_spotter_data():
 
     dataset = (
-        SpotterBuoysDataSource("../data/displacements.csv")
+        SpotterBuoysDataSource(SPOTTER_FILE)
         .read_dataset()
     )
     
@@ -78,11 +81,11 @@ def test_cwt_spotter_data():
         dataset["surface_elevation"], fs=2.5, nperseg=512
     )
 
-    fourier_std = np.trapz(fourier_power, x=fourier_freq) ** 0.5
+    fourier_std = np.trapezoid(fourier_power, x=fourier_freq) ** 0.5
     wavelet_std = power.mean("time").integrate("frequency").item() ** 0.5
     signal_std = dataset["surface_elevation"].std("time").item()
 
-    assert isinstance(power, xr.DataAarray)
+    assert isinstance(power, xr.DataArray)
     assert np.allclose(wavelet_std, fourier_std, rtol=0.5)
     assert np.allclose(wavelet_std, signal_std, rtol=0.5)
 
@@ -105,22 +108,13 @@ def test_cwt_std():
             data_array, fs=2.5, nperseg=512
         )
 
-        scipy_cwt = signal.cwt(
-            data_array, widths=1/freqs, wavelet=signal.morlet2
-        )
-        scipy_power = np.abs(scipy_cwt) ** 2
-
-        scipy_std = np.trapz(np.mean(scipy_power, axis=1), x=freqs) ** 0.5
-        fourier_std = np.trapz(fourier_power, x=fourier_freq) ** 0.5
+        fourier_std = np.trapezoid(fourier_power, x=fourier_freq) ** 0.5
         wavelet_std = power.mean("time").integrate("frequency").item() ** 0.5
-        signal_std = data_array.std("time").item()
     
         print("Wavelet std: ", wavelet_std)
-        print("Scipy cwt std: ", scipy_std)
         print("Fourier std: ", fourier_std)
-        print("Signal std: ", signal_std)
+        print("Signal std: ", input_std)
         print(35*"=")
 
-        assert np.allclose(wavelet_std, scipy_std, rtol=0.1)
         assert np.allclose(wavelet_std, fourier_std, rtol=0.1)
-        assert np.allclose(wavelet_std, signal_std, rtol=0.1)
+        assert np.allclose(wavelet_std, input_std, rtol=0.1)

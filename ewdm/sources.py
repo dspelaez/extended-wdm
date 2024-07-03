@@ -15,18 +15,18 @@ from .parameters import VARIABLE_NAMES
 
 
 class SpotterBuoysDataSource(object):
-    """Class to handle Spotter buoy data from SD Card"""
+    """Class to handle Spotter buoy data parsed from SD Card"""
 
     def __init__(
             self,
-            fname: str ="displacements.csv",
+            fname: str ="displacement.csv",
         ):
         if os.path.isfile(fname):
             self.fname = Path(fname)
         else:
             raise FileNotFoundError(
-                "File not found. The name of the file in the SD Card is "
-                "likely `displacements.csv`. Please provide "
+                "File not found. The name of the file parsed from the "
+                "SD Card is likely `displacement.csv`. Please provide "
                 "the full path to this file."
             )
 
