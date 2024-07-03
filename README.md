@@ -1,4 +1,5 @@
 [![Documentation Status](https://readthedocs.org/projects/extended-wdm/badge/?version=latest)](https://extended-wdm.readthedocs.io/en/latest/?badge=latest)
+[![Python package](https://github.com/dspelaez/extended-wdm/actions/workflows/python-package.yml/badge.svg)](https://github.com/dspelaez/extended-wdm/actions/workflows/python-package.yml)
 
 <img src="docs/_static/logo.png" width="400">
 
