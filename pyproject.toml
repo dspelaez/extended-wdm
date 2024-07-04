@@ -19,6 +19,11 @@ dependencies = [
     "tqdm",
     "requests",
 ]
+docs = [
+    "sphinx==7.3.7",
+    "sphinx-rtd-theme==2.0.0",
+    "autodoc"
+]
 
 classifiers = [
     "Intended Audience :: Science/Research",
