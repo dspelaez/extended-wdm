@@ -16,9 +16,11 @@ dependencies = [
     "pydap",
     "netCDF4",
     "bottleneck",
-    "tqdm",
-    "requests",
+    "tqdm"
 ]
+[project.optional-dependencies]
+test = ["pytest", "flake8"]
+extra = ["zarr"]
 docs = [
     "sphinx",
     "sphinx-rtd-theme",
