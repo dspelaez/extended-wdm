@@ -18,15 +18,6 @@ dependencies = [
     "bottleneck",
     "tqdm"
 ]
-[project.optional-dependencies]
-test = ["pytest", "flake8"]
-extra = ["zarr"]
-docs = [
-    "sphinx",
-    "sphinx-rtd-theme",
-    "autodoc"
-]
-
 classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
@@ -49,3 +40,12 @@ build-backend = "setuptools.build_meta"
 
 [project.urls]
 "documentation" = "https://extended-wdm.readthedocs.io/en/latest/"
+
+[project.optional-dependencies]
+test = ["pytest", "flake8"]
+extra = ["zarr"]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "autodoc"
+]
