@@ -5,8 +5,9 @@
 
 import os
 import sys
+sys.path.insert(0, os.path.abspath('..'))
+
 import ewdm
-sys.path.insert(0, os.path.abspath("../"))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -14,12 +15,17 @@ sys.path.insert(0, os.path.abspath("../"))
 project = 'ewdm'
 copyright = '2024, Daniel Pelaez-Zapata'
 author = 'Daniel Pelaez-Zapata'
-release = '0.3'
+version = ewdm.__version__
+release = ewdm.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.napoleon'
+]
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']

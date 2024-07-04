@@ -2,6 +2,12 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
+"""Top-level package for ewdm"""
+
+__author__ = """Daniel Pelaez-Zapata"""
+__email__ = 'daniel.pelaez-zapata@proton.me'
+__version__ = '0.3'
+
 # from . import fourier
 from . import helpers
 from . import density
