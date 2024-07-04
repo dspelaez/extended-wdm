@@ -5,8 +5,8 @@
 
 import os
 import sys
-sys.path.append(os.path.abspath('..'))
-sys.path.append(os.path.abspath('../..'))
+import ewdm
+sys.path.insert(0, os.path.abspath("../"))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
