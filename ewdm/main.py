@@ -15,6 +15,10 @@ from .sources import SpotterBuoysDataSource, CDIPDataSourceRealTime
 from .parameters import VARIABLE_NAMES
 
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("main")
+
+
 RADTODEG = 180. / np.pi
 DEGTORAD = np.pi / 180.
 GRAV = 9.8
@@ -37,8 +41,10 @@ class _BaseClass(object):
         if fs is None:
             try:
                 self.fs = self.dataset.sampling_rate
+                logger.info(f"Sampling frequency from dataset: {self.fs} Hz")
             except AttributeError:
                 self.fs = get_sampling_frequency(self.dataset["time"])
+                logger.info(f"Sampling frequency estimated: {self.fs} Hz")
         else:
             self.fs = fs
 
@@ -65,8 +71,14 @@ class _BaseClass(object):
         ntime = len(dataset["time"])
         nan_ratio = (dataset["surface_elevation"].isnull().sum() / ntime)
         if nan_ratio > max_nan_ratio:
+            logger.warning(
+                f"The invalid data ratio is {nan_ratio} and is "
+                f"greater than the allowed value {max_nan_ratio}. "
+                f"Returning dataset full of nans."
+            )
             return dataset * np.nan
         else:
+            logger.info("The dataset will be linearly interpolated.")
             return dataset.interpolate_na(
                 dim="time", method="quadratic", max_gap=max_time_gap,
                 fill_value="extrapolate"
@@ -125,18 +137,322 @@ class Arrays(_BaseClass):
         """
         pass
 
+    @property
+    def npoints(self):
+        """Number of elements (points) in the array."""
+        return len(dataset["element"])
+
+    @property
+    def neqs(self):
+        """Number of unique possible equations."""
+        return self.npoints * (self.npoints-1) // 2
+
+    @property
+    def npairs(self):
+        """Number of pairs combinations."""
+        return (self.neqs * (self.neqs - 1)) // 2
+    
     
     def wavelet_coefficients(self, dataset: xr.Dataset) -> xr.Dataset:
-        ...
+        """Estimate wavelet coefficients
 
-    def array_geometry(self, dataset: xr.Dataset) -> np.ndarray:
-        ...
+        This method takes the dataset containing the sea surface
+        elevation data at different elements of the array and returns
+        the corresponding wavelet complex coefficients for each
+        element.
+        """
+
+        if "surface_elevation" in dataset:
+            # coeffs = xr.apply_ufunc(
+                # cwt, dataset['surface_elevation'],
+                # input_core_dims=[['time']],
+                # output_core_dims=[['frequency', 'time']],
+                # vectorize=True,
+                # output_dtypes=[complex],
+                # kwargs={"freqs": self.freqs, "fs": self.fs}
+            # )
+            # coeffs.coords["frequency"] = self.freqs
+            # coeffs.name = "wavelet_coefficients"
+            coeffs = xr.Dataset()
+            for element in dataset["element"]:
+                cwt_result = cwt(
+                    dataset["surface_elevation"].sel(element=element),
+                    freqs=self.freqs, fs=self.fs
+                )
+                coeffs[element.item()] = xr.DataArray(
+                    cwt_result,
+                    dims=["frequency", "time"],
+                    coords={"frequency": self.freqs, "time": dataset["time"]},
+                    attrs={"sampling_rate": self.fs}
+                )
+            return coeffs.to_array(dim='element')
+            
+
+        else:
+            raise Exception(
+                "Local wavelet power cannot be computed because "
+                "`surface_elevation` data is not available in "
+                "the dataset."
+            )
+
     
-    def compute_phase(self, dataset: xr.Dataset) -> xr.Dataset:
-        ...
+    def array_geometry(self, dataset: xr.Dataset) -> np.ndarray:
+        """Compute array of spatial differences for each point.
+            
+        This method takes the dataset containing the position (x
+        and y) of each element of the spatial array and calculate
+        the position difference vector.
+        """
 
-    def compute_power(self, dataset: xr.Dataset) -> xr.Dataset:
-        ...
+        try:
+            x = dataset["position_x"].data
+            y = dataset["position_y"].data
+        except KeyError:
+            raise Exception(
+                "Local wavelet power cannot be computed because "
+                "`position_x` and `position_y` data is not available "
+                "in the dataset."
+            )
+
+        dx = np.zeros((self.neqs, 2))
+        index = 0
+        for m in range(self.npoints):
+            for n in range(m + 1, self.npoints):
+                logger.info(f"Processing for pair {index}: {m},{n}")
+                dx[index, 0] = x[m] - x[n]
+                dx[index, 1] = y[m] - y[n]
+                index += 1
+
+        return dx
+    
+    
+    def compute_angle(self, complex_data):
+        """Compute and wrap angle in radians from complex argument."""
+
+        angle = np.arctan2(complex_data.imag, complex_data.real)
+        return (angle - np.pi) % (2 * np.pi) - np.pi
+
+
+    def phase_differences(
+        self, coeffs: xr.Dataset, cross_wavelet=False
+    ) -> np.ndarray:
+        """Compute array with phase differences between array pairs"""
+
+        # get freq nd time lenghts
+        ntimes = len(coeffs["time"])
+        nfreqs = len(coeffs["frequency"])
+
+        # initialise delta phi array
+        dphi = np.zeros([self.neqs, nfreqs, ntimes])
+
+        # loop for each pair of points
+        index = 0
+        for m in range(self.npoints):
+            for n in range(m + 1, self.npoints):
+                logger.info(f"Processing for pair {index}: {m},{n}")
+                if cross_wavelet:
+                    dphi[index, :, :] = (
+                        self.compute_angle(
+                            coeffs.isel(element=m) * 
+                            coeffs.isel(element=n).conj()
+                        ).data
+                    )
+                else:
+                    dphi[index, :, :] = (
+                        self.compute_angle(coeffs.isel(element=m)) - 
+                        self.compute_angle(coeffs.isel(element=n))
+                    ).data
+                index += 1
+
+        return dphi
+
+    
+    def estimate_wavelet_power(self, coeffs: xr.Dataset) -> xr.Dataset:
+        return (abs(coeffs)**2).mean("element")
+
+
+    def compute_wavenumbers(self, dx, dphi, solver="lstsq"):
+        """Compute wavenumber vector from phase differences and distances.
+        
+        This method take the point distances and the phase differences 
+        arrays and returns the wavenumber vector components and residuals.
+        """
+
+        # assuming that dphi array is neqs, nfreqs, ntimes
+        logger.info(f"phase array size is {dphi.shape}")
+        _, nfreqs, ntimes = dphi.shape
+
+        # initialise delta kvector and residuals array
+        k_vector = np.zeros([2, nfreqs, ntimes])
+        residuals = np.zeros([nfreqs, ntimes])
+
+        if solver in ["lstsq", "least-squares", 1]:
+            
+            # loop for each frequency
+            for ifrq in range(nfreqs):
+                logger.info(
+                    f"Finding least-square solution for "
+                    f"frequency index {ifrq}/{nfreqs}."
+                )
+                k_vector[:,ifrq,:], residuals[ifrq,:], _, _ = np.linalg.lstsq(
+                    dx, dphi[:,ifrq,:], rcond=None
+                )
+                
+            # extract wavenumber components
+            kx, ky = k_vector[0,:,:], k_vector[1,:,:]
+
+            # kx = xr.DataArray(
+                # k_vector[0,:,:],
+                # dims=["frequency", "time"],
+                # coords={"frequency": self.freqs, "time": dataset["time"]},
+                # attrs={"sampling_rate": self.fs}
+            # )
+
+            return ky, ky, residuals
+
+        elif solver in ["pair-wise", "pairwise", 2]:
+            raise NotImplementedError("Not yet")
+
+        else:
+            raise Exception(
+                "Accepted solvers are:"
+                "1: `least-squares` `lstsq`"
+                "2: `pair-wise` `pairwise`"
+            )
+
+
+    def theta_from_wavenumber(
+        self, kx: np.ndarray, ky: np.ndarray
+    ) -> xr.DataArray:
+        """Estimate local wave direction from wavenumber components"""
+        return xr.DataArray(
+            RADTODEG * np.arctan2(ky, kx),
+            dims = ["frequency", "time"],
+            coords={"frequency": self.freqs, "time": dataset["time"]},
+        )
+
+    def estimate_directional_distribution(self, dataset) -> xr.Dataset:
+        """Estimate the directional distribution of wave energy.
+
+        This method calculates the wavelet power and local wave direction using
+        the local estimates of wavenumber vector and then estimates the
+        directional distribution function and directional spectra.
+
+        Returns:
+            xr.Dataset: Dataset containing the directional spectrum, directional
+            distribution, and frequency spectrum.
+
+        Raises:
+            Exception: If `use` is not one of `displacements`, `velocities`,
+            `accelerations` or `slopes`.
+        """
+
+        # if self.interpolate:
+            # _dataset = self.interpolate_dataset(
+                # dataset, self.max_nan_ratio, self.max_time_gap
+            # )
+        # else:
+            # _dataset = dataset.copy()
+        
+        _dataset = dataset.copy()
+
+
+        coeffs = self.wavelet_coefficients(_dataset)
+        dx = self.array_geometry(_dataset)
+        dphi = self.phase_differences(coeffs, cross_wavelet=False)
+        kx, ky, residuals = self.compute_wavenumbers(dx, dphi, solver="lstsq")
+        theta = self.theta_from_wavenumber(kx, ky)
+        power = self.estimate_wavelet_power(coeffs)
+        
+        return estimate_directional_distribution(
+            power, theta, dd=self.dd, kappa=self.kappa
+        )
+
+
+    def compute(
+            self,
+            omin: float = -5,
+            omax: float = None,
+            nvoice: float = 16,
+            dd: float = 5.0,
+            kappa: float = 36.0,
+            use: str = "displacements",
+            block_size: str = "30min",
+        ) -> xr.Dataset:
+        """Perform computation using specified parameters.
+
+        Args:
+            omin (float, optional): Minimum octave (default is -5).
+            omax (float, optional): Maximum octave. If None, it is
+                automatically determined based sampling frequency. The final
+                frequency array is logaritmically distributed from
+                `2**omin` to `2**omax`.
+            nvoice (float, optional): Number of voices for the computation
+                (default is 16).
+            dd (float, optional): Directional resolution in degrees
+                (default is 5 degrees).
+            kappa (float, optional): Smoothness parameter for Kernel
+                Density Estimation. Small values of `kappa` produce oversmooth
+                results (default is 36.0).
+            use (str, optional): Type of data to perform estimation.
+                It should be should be either `displacements`, `velocities`
+                or `accelerations`." (default is "displacements").
+            block_size (str): If dataset contains more than one hour of data,
+                split dataset into blocks of `block_size` and perform
+                computation over each block. The resulting output will have a
+                time dimension. It is advisable to choose values of no more than
+                half-hour. Default `block_size="30min"`.
+
+        Returns:
+            xr.Dataset: Dataset containing the directional spectrum, directional
+                distribution, and frequency spectrum.
+        """
+
+        # the maximum frequency is given by the nyquist frequency
+        if omax is None:
+            omax = int(np.log2(self.fs / 2))
+
+        self.omin = omin
+        self.omax = omax
+        self.nvoice = nvoice
+
+        # fourier equivalent frequencies
+        self.freqs = 2. ** np.linspace(omin, omax, nvoice*abs(omin-omax)+1)
+
+        # directional resolution
+        self.dd = dd
+        self.kappa = kappa
+
+        # data used for estimation
+        self.use = use
+        self.block_size = block_size
+
+        # determine length of time series
+        # if dataset contains more than one hour of data, it will be splitted
+        # into `block_size` and the output will be time-dependent
+        time_length = (
+            (self.dataset["time"][-1] - self.dataset["time"][0]).item() / 3600e9
+        )
+        if time_length > 1.0:
+            logger.warning(
+                f"Length of time series is {time_length:.2f} hours."
+                f"I understand that you want spectra every {self.block_size}. "
+                f"Time series are being splitted."
+            )
+            groups = self.dataset.resample(time=self.block_size)
+            results = (
+                self.estimate_directional_distribution(subset)
+                .compute(use=self.use)
+                .expand_dims({"time": [time]})
+                for time, subset in tqdm(groups, desc="Processing:")
+                if len(subset["time"]) > 1
+            )
+            return xr.concat(results, dim="time")
+        else:
+            return self.estimate_directional_distribution(self.dataset)
+        
+
+
 
 
 
@@ -291,10 +607,7 @@ class Triplets(_BaseClass):
             Exception: If `eastward_displacement` and `northward_displacement`
             are not available in the dataset.
         """
-        if all(
-            var in dataset for var in
-                ["eastward_displacement", "northward_displacement"]
-            ):
+        try:
             Wxz = xwt(
                 dataset["eastward_displacement"],
                 dataset["surface_elevation"],
@@ -306,8 +619,8 @@ class Triplets(_BaseClass):
                 freqs=self.freqs, fs=self.fs
             )
             return RADTODEG * np.arctan2((1j*Wyz).real, (1j*Wxz).real)
-        else:
-            raise Exception(
+        except KeyError:
+            logger.exception(
                 "Local wave direction cannot be computed from wave "
                 "displacements because `eastward_displacement` and "
                 "`northward_displacement` are not available in the "
@@ -343,11 +656,11 @@ class Triplets(_BaseClass):
             )
             return RADTODEG * np.arctan2(Wyz.real, Wxz.real)
         except KeyError:
-            raise Exception(
+            logger.exception(
                 "Local wave direction cannot be computed from wave "
                 "velocities because `eastward_velocity` and "
                 "`northward_velocity` are not available in the "
-                "dataset.\n"
+                "dataset."
             )
 
 
@@ -379,7 +692,7 @@ class Triplets(_BaseClass):
             )
             return RADTODEG * np.arctan2(Wyz.imag, Wxz.imag)
         except KeyError:
-            raise Exception(
+            logger.exception(
                 "Local wave direction cannot be computed from wave "
                 "accelerations because required variables are not "
                 "available in the dataset."
@@ -530,12 +843,17 @@ class Triplets(_BaseClass):
             (self.dataset["time"][-1] - self.dataset["time"][0]).item() / 3600e9
         )
         if time_length > 1.0:
+            logger.warning(
+                f"Length of time series is {time_length:.2f} hours."
+                f"I understand that you want spectra every {self.block_size}. "
+                f"Time series are being splitted."
+            )
             groups = self.dataset.resample(time=self.block_size)
             results = (
                 self.estimate_directional_distribution(subset)
                 .compute(use=self.use)
                 .expand_dims({"time": [time]})
-                for time, subset in tqdm(groups)
+                for time, subset in tqdm(groups, desc="Processing:")
                 if len(subset["time"]) > 1
             )
             return xr.concat(results, dim="time")
