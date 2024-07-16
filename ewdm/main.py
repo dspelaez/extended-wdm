@@ -98,21 +98,33 @@ class Arrays(_BaseClass):
 
         .. code-block:: python
 
-            <xarray.Dataset>
-            Dimensions:                 (x, y, time)
-            Coordinates:
-              * time                    (time) datetime64[ns]
-              * x                       (time) datetime64[ns]
-              * y                       (time) datetime64[ns]
-            Data variables:
-                surface_elevation       (x, y, time) float32
-            Attributes: (1/1)
-                sampling_rate:           2.5
+           <xarray.Dataset>
+           Dimensions:            (time: 4096, element: 6)
+           Coordinates:
+             * time               (time) float64
+             * element            (element) int64 0 1 2 3 4 5
+           Data variables:
+               surface_elevation  (time, element) float64
+               position_x         (element) float64
+               position_y         (element) float64
+           Attributes:
+               sampling_rate:  4
 
     Returns:
         xr.Dataset: Dataset containing produced directional spectra
         and directional spreading function.
     """
+
+    def __init__(self, *args):
+
+        # initialise child class with parent args
+        super().__init__(*args)
+
+        # number of elements, unique possible equations and pairs
+        self.npoints = len(self.dataset["element"])
+        self.neqs = self.npoints * (self.npoints-1) // 2
+        self.npairs = (self.neqs * (self.neqs - 1)) // 2
+
 
     @classmethod
     def from_numpy(
@@ -124,33 +136,9 @@ class Arrays(_BaseClass):
         ):
         """
         Create an instance of Arrays from numpy arrays.
-
-        Arguments:
-            surface_elevation: Surface elevation array
-            eastward_displacement: Eastward displacements
-            northward_displacement: Northward displacements
-            eastward_velocities: Eastward velocities
-            northward_velocities: Northward velocities
-            eastward_acceleration: Eastward accelerations
-            northward_acceleration: Northward accelerations
-            time: Time values.
         """
         pass
 
-    @property
-    def npoints(self):
-        """Number of elements (points) in the array."""
-        return len(dataset["element"])
-
-    @property
-    def neqs(self):
-        """Number of unique possible equations."""
-        return self.npoints * (self.npoints-1) // 2
-
-    @property
-    def npairs(self):
-        """Number of pairs combinations."""
-        return (self.neqs * (self.neqs - 1)) // 2
     
     
     def wavelet_coefficients(self, dataset: xr.Dataset) -> xr.Dataset:
@@ -163,16 +151,6 @@ class Arrays(_BaseClass):
         """
 
         if "surface_elevation" in dataset:
-            # coeffs = xr.apply_ufunc(
-                # cwt, dataset['surface_elevation'],
-                # input_core_dims=[['time']],
-                # output_core_dims=[['frequency', 'time']],
-                # vectorize=True,
-                # output_dtypes=[complex],
-                # kwargs={"freqs": self.freqs, "fs": self.fs}
-            # )
-            # coeffs.coords["frequency"] = self.freqs
-            # coeffs.name = "wavelet_coefficients"
             coeffs = xr.Dataset()
             for element in dataset["element"]:
                 cwt_result = cwt(
@@ -214,11 +192,12 @@ class Arrays(_BaseClass):
                 "in the dataset."
             )
 
+        logger.info(f"Computing spatial distances in array.")
+
         dx = np.zeros((self.neqs, 2))
         index = 0
         for m in range(self.npoints):
             for n in range(m + 1, self.npoints):
-                logger.info(f"Processing for pair {index}: {m},{n}")
                 dx[index, 0] = x[m] - x[n]
                 dx[index, 1] = y[m] - y[n]
                 index += 1
@@ -229,8 +208,8 @@ class Arrays(_BaseClass):
     def compute_angle(self, complex_data):
         """Compute and wrap angle in radians from complex argument."""
 
-        angle = np.arctan2(complex_data.imag, complex_data.real)
-        return (angle - np.pi) % (2 * np.pi) - np.pi
+        return np.arctan2(complex_data.imag, complex_data.real)
+        # return (angle - np.pi) % (2 * np.pi) - np.pi
 
 
     def phase_differences(
@@ -266,11 +245,6 @@ class Arrays(_BaseClass):
 
         return dphi
 
-    
-    def estimate_wavelet_power(self, coeffs: xr.Dataset) -> xr.Dataset:
-        return (abs(coeffs)**2).mean("element")
-
-
     def compute_wavenumbers(self, dx, dphi, solver="lstsq"):
         """Compute wavenumber vector from phase differences and distances.
         
@@ -282,54 +256,62 @@ class Arrays(_BaseClass):
         logger.info(f"phase array size is {dphi.shape}")
         _, nfreqs, ntimes = dphi.shape
 
-        # initialise delta kvector and residuals array
-        k_vector = np.zeros([2, nfreqs, ntimes])
-        residuals = np.zeros([nfreqs, ntimes])
+        # initialise delta kx, ky and epsilon
+        kx = np.zeros([nfreqs, ntimes])
+        ky = np.zeros([nfreqs, ntimes])
+        epsilon = np.zeros([nfreqs, ntimes])
 
         if solver in ["lstsq", "least-squares", 1]:
+
+            logger.info("Finding least-square solution")
             
             # loop for each frequency
             for ifrq in range(nfreqs):
-                logger.info(
-                    f"Finding least-square solution for "
-                    f"frequency index {ifrq}/{nfreqs}."
+                kk, residuals, _, _ = np.linalg.lstsq(
+                    dx, dphi[:,ifrq,:], rcond=self.rcond
                 )
-                k_vector[:,ifrq,:], residuals[ifrq,:], _, _ = np.linalg.lstsq(
-                    dx, dphi[:,ifrq,:], rcond=None
-                )
+                kx[ifrq,:] = kk[0,:]
+                ky[ifrq,:] = kk[1,:]
+                epsilon[ifrq,:] = residuals
                 
-            # extract wavenumber components
-            kx, ky = k_vector[0,:,:], k_vector[1,:,:]
+            return kx, ky, epsilon
 
-            # kx = xr.DataArray(
-                # k_vector[0,:,:],
-                # dims=["frequency", "time"],
-                # coords={"frequency": self.freqs, "time": dataset["time"]},
-                # attrs={"sampling_rate": self.fs}
-            # )
-
-            return ky, ky, residuals
-
+        # solve each pair of elemens separately
         elif solver in ["pair-wise", "pairwise", 2]:
-            raise NotImplementedError("Not yet")
+
+            logger.info("Finding pair-wise solution")
+            
+            # loop for each frequency
+            for ifrq in range(nfreqs):
+                kk_set = []
+                for i in range(self.neqs-1):
+                    for j in range(i+1, self.neqs):
+                        dot_ij = (
+                            (np.dot(dx[i], dx[j])) /
+                            (np.linalg.norm(dx[i]) * np.linalg.norm(dx[j]))
+                        )
+                        if np.abs(dot_ij) < 0.5:
+                            dx_ij = np.array([dx[i], dx[j]])
+                            dphi_ij = np.array(
+                                [dphi[i,ifrq,:], dphi[j,ifrq,:]]
+                            )
+                            kk = np.linalg.solve(dx_ij, dphi_ij)
+                            kk_set.append(kk)
+
+                kk_set = np.array(kk_set)
+                kx[ifrq,:] = np.mean(kk_set, axis=0)[0]
+                ky[ifrq,:] = np.mean(kk_set, axis=0)[1]
+                # epsilon[ifrq,:] = np.std(kk_set, axis=0)
+
+            return kx, ky, epsilon
+
 
         else:
             raise Exception(
-                "Accepted solvers are:"
-                "1: `least-squares` `lstsq`"
-                "2: `pair-wise` `pairwise`"
+                "Solver argument only accepts the following options:\n"
+                "1: `least-squares` `lstsq`\n"
+                "2: `pair-wise` `pairwise`\n"
             )
-
-
-    def theta_from_wavenumber(
-        self, kx: np.ndarray, ky: np.ndarray
-    ) -> xr.DataArray:
-        """Estimate local wave direction from wavenumber components"""
-        return xr.DataArray(
-            RADTODEG * np.arctan2(ky, kx),
-            dims = ["frequency", "time"],
-            coords={"frequency": self.freqs, "time": dataset["time"]},
-        )
 
     def estimate_directional_distribution(self, dataset) -> xr.Dataset:
         """Estimate the directional distribution of wave energy.
@@ -356,16 +338,57 @@ class Arrays(_BaseClass):
         
         _dataset = dataset.copy()
 
-
+        # first obtaing wavelet coefficients
         coeffs = self.wavelet_coefficients(_dataset)
+
+        # array geometry
         dx = self.array_geometry(_dataset)
-        dphi = self.phase_differences(coeffs, cross_wavelet=False)
-        kx, ky, residuals = self.compute_wavenumbers(dx, dphi, solver="lstsq")
-        theta = self.theta_from_wavenumber(kx, ky)
-        power = self.estimate_wavelet_power(coeffs)
+
+        # TODO: add the following paramaters as class attrs
+        # xmin = np.min(np.abs(dx[:, 0] + 1j*dx[:, 1]))
+        # xmax = np.max(np.abs(dx[:, 0] + 1j*dx[:, 1]))
+
+        # kmin = GRAV * (1 / (self.fs * xmax))**2  # wave_speed < sampling_speed
+        # kmax = np.pi / xmin  # when k*dx = pi
+
+        # fmin = np.sqrt(GRAV * kmin) / (2*np.pi)
+        # fmax = np.sqrt(GRAV * kmax) / (2*np.pi)
+
+        # period_bounds = [1/fmax, 1/fmin]
+        # wavelength_bounds = [2*np.pi/kmax, 2*np.pi/kmin]
+
+        # phase differences
+        dphi = self.phase_differences(coeffs, cross_wavelet=self.cross_wavelet)
+        dphi = (dphi - np.pi)  % (2* np.pi) - np.pi
+
+        # limit = np.pi
+        # min_phase = 0
+        # dphi[dphi == 0] = min_phase
+        # dphi[dphi >  limit] = min_phase
+        # dphi[dphi < -limit] = min_phase
+
+        # compute wave number components and resiudal
+        # TODO: restrict to residuals less than certain threshold
+        kx, ky, residuals = self.compute_wavenumbers(
+            dx, dphi, solver=self.solver
+        )
+        
+        # compute local wave direction
+        theta =  xr.DataArray(
+            RADTODEG * np.arctan2(ky, kx),
+            dims = ["frequency", "time"],
+            coords={"frequency": self.freqs, "time": _dataset["time"]},
+        )
+
+        # compute wavelet power from wavelet coefficients
+        data_std = _dataset["surface_elevation"].std("time")
+        power = np.abs(coeffs) ** 2
+        if self.normalise:
+            wavelet_energy = power.mean("time").integrate("frequency")**0.5
+            mean_power = (power * data_std / wavelet_energy).mean("element")
         
         return estimate_directional_distribution(
-            power, theta, dd=self.dd, kappa=self.kappa
+            mean_power, theta, dd=self.dd, kappa=self.kappa
         )
 
 
@@ -374,6 +397,9 @@ class Arrays(_BaseClass):
             omin: float = -5,
             omax: float = None,
             nvoice: float = 16,
+            cross_wavelet: bool = False,
+            solver: str = "lstsq",
+            rcond: float = None,
             dd: float = 5.0,
             kappa: float = 36.0,
             use: str = "displacements",
@@ -389,6 +415,16 @@ class Arrays(_BaseClass):
                 `2**omin` to `2**omax`.
             nvoice (float, optional): Number of voices for the computation
                 (default is 16).
+            cross_wavelet (bool, optional): Whether or not use cross-wavelet
+                product to compute phase differences between array pairs. If
+                False then arithmetic substraction is used (default).
+            solver (str, option): Wavenumber solver method. Two options are
+                available: 1 or 'lstsq' or 'least-square': Least-square
+                solution of all possible pair. combination. 2 or 'pairwise'
+                or 'pair-wise': Pair-wise solution and averaging...
+            rcond (float, optional): If solver is `lstsq` this argument is passed
+                to `np.linalg.lstsq` function. It is a cut-off ration for small
+                singular values of matrix `dphi`.
             dd (float, optional): Directional resolution in degrees
                 (default is 5 degrees).
             kappa (float, optional): Smoothness parameter for Kernel
@@ -418,6 +454,11 @@ class Arrays(_BaseClass):
 
         # fourier equivalent frequencies
         self.freqs = 2. ** np.linspace(omin, omax, nvoice*abs(omin-omax)+1)
+
+        # determine phasediff and wavenumber solver 
+        self.cross_wavelet = cross_wavelet
+        self.solver = solver
+        self.rcond = rcond
 
         # directional resolution
         self.dd = dd
@@ -450,11 +491,6 @@ class Arrays(_BaseClass):
             return xr.concat(results, dim="time")
         else:
             return self.estimate_directional_distribution(self.dataset)
-        
-
-
-
-
 
 
 class Triplets(_BaseClass):

@@ -24,13 +24,26 @@ def _vonmises_kde(arr, bins, kappa):
     return kde
 
 
+def _gaussian_kde(arr, bins, bandwidth='silverman'):
+    """Return Kernel-Density Estimation using Gaussian distribution"""
+
+    if bandwidth == 'silverman':
+        bandwidth = 1.06 * arr.std() * len(arr) ** (-1./5.)
+
+    x = (bins[:, None] - arr[None, :]) / bandwidth
+    fac = 1 / np.sqrt(2 * np.pi)
+
+    kde = (fac * np.exp(-0.5 * x**2)).sum(axis=1)
+    return kde / (len(arr) * bandwidth)
+
+
 # function to get histogram along freq axis
 def _get_density(arr, bins, kappa):
     if np.isnan(arr).all():
         return np.zeros_like(bins, dtype="float") * np.nan
     else:
         if kappa is not None:
-            return _vonmises_kde(arr, bins=bins, kappa=kappa)
+            return _vonmises_kde(arr[~np.isnan(arr)], bins=bins, kappa=kappa)
         else:
             bins_edges = np.r_[bins, bins[-1]+np.diff(bins)[0]]
             return np.histogram(arr, bins=bins_edges, density=True)[0]
