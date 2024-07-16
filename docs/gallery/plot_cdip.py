@@ -3,8 +3,8 @@
 # vim:fenc=utf-8
 
 """
-Using CDIP data in real time
-============================
+Using real time CDIP data
+=========================
 
 This example shows how to compute the directional wave spectrum from waverider wave buoys data obtained from CDIP dataset in real time.
 """
