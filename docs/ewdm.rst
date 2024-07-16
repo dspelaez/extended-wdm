@@ -4,14 +4,6 @@ API Reference
 Submodules
 ----------
 
-ewdm.fourier module
--------------------
-
-.. automodule:: ewdm.fourier
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 ewdm.helpers module
 -------------------
 

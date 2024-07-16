@@ -24,7 +24,8 @@ release = ewdm.__version__
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'sphinx_gallery.gen_gallery'
 ]
 
 templates_path = ['_templates']
@@ -34,6 +35,11 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 napoleon_google_docstring = True
 napoleon_include_init_with_doc = True
 
+# gallery configuration
+sphinx_gallery_conf = {
+    'examples_dirs': 'gallery',    # path to your example scripts
+    'gallery_dirs': 'auto_gallery' # path to where to save gallery generated output
+}
 
 
 # -- Options for HTML output -------------------------------------------------

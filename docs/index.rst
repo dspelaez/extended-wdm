@@ -72,7 +72,7 @@ Directional Method.
 
    getting_started
    maths
-   examples
+   gallery
 
 
 API Documentation
