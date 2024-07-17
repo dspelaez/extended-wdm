@@ -15,7 +15,8 @@ from .sources import SpotterBuoysDataSource, CDIPDataSourceRealTime
 from .parameters import VARIABLE_NAMES
 
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger("main")
 
 
@@ -115,10 +116,20 @@ class Arrays(_BaseClass):
         and directional spreading function.
     """
 
-    def __init__(self, *args):
+    def __init__(
+            self,
+            dataset: xr.Dataset,
+            fs: float = None,
+            interpolate: bool = True,
+            max_nan_ratio: float = 0.1,
+            max_time_gap: str = "10s",
+            normalise: bool = True
+        ):
 
         # initialise child class with parent args
-        super().__init__(*args)
+        super().__init__(
+            dataset, fs, interpolate, max_nan_ratio, max_time_gap, normalise
+        )
 
         # number of elements, unique possible equations and pairs
         self.npoints = len(self.dataset["element"])
@@ -132,12 +143,46 @@ class Arrays(_BaseClass):
         time: np.ndarray,
         surface_elevation: np.ndarray,
         position_x: np.ndarray,
-        position_y: np.ndarray
-        ):
+        position_y: np.ndarray,
+        **kwargs
+    ):
         """
         Create an instance of Arrays from numpy arrays.
+
+        Arguments:
+            time: Time array
+            surface_elevation: Surface elevation array. The size of this object
+                should be consistent with the number of elements in the array.
+            position_x: Easting coordinate of array elements in metres
+            position_y: Northing coordinate of array elements in metres
         """
-        pass
+
+        # determine number of elements
+        if len(position_x) == len(position_y):
+            # element numbering is always assumed from 0 to number of elements
+            elements = np.arange(len(position_x))
+        else:
+            msg = "Number of elements in `x` and `y` are not consistent"
+            logger.exception(msg)
+            raise Exception(msg)
+
+        # TODO: check surface_elevation size
+        
+        # create dataset from numpy arrays
+        dataset = xr.Dataset(
+            data_vars = {
+                "surface_elevation": (["time", "element"], surface_elevation),
+                "position_x": ("element", position_x),
+                "position_y": ("element", position_y)
+            },
+            coords = {"time": time, "element": elements},
+        )
+
+        # store sampling_rate as a global attribute
+        if 'fs' in kwargs:
+            dataset.attrs = {'sampling_rate': kwargs["fs"]}
+
+        return cls(dataset, **kwargs)
 
     
     
@@ -542,11 +587,13 @@ class Triplets(_BaseClass):
         northward_velocity: np.ndarray = None,
         eastward_acceleration: np.ndarray = None,
         northward_acceleration: np.ndarray = None,
+        **kwargs
     ):
         """
-        Create an instance of Arrays from numpy arrays.
+        Create an instance of Triplets from numpy arrays.
 
         Arguments:
+            time: time
             surface_elevation: Surface elevation array
             eastward_displacement: Eastward displacements
             northward_displacement: Northward displacements
@@ -556,7 +603,39 @@ class Triplets(_BaseClass):
             northward_acceleration: Northward accelerations
             time: Time values.
         """
-        pass
+        
+        # create dataset from numpy arrays
+        data_vars = {
+            'time': time,
+            'surface_elevation': ("time", surface_elevation)
+        }
+
+        if eastward_displacement is not None:
+            data_vars['eastward_displacement'] = ("time", eastward_displacement)
+        
+        if northward_displacement is not None:
+            data_vars['northward_displacement'] = ("time", northward_displacement)
+        
+        if eastward_velocity is not None:
+            data_vars['eastward_velocity'] = ("time", eastward_velocity)
+        
+        if northward_velocity is not None:
+            data_vars['northward_velocity'] = ("time", northward_velocity)
+        
+        if eastward_acceleration is not None:
+            data_vars['eastward_acceleration'] = ("time", eastward_acceleration)
+
+        if northward_acceleration is not None:
+            data_vars['northward_acceleration'] = ("time", northward_acceleration)
+        
+        # store sampling_rate as a global attribute
+        attrs = {}
+        if 'fs' in kwargs:
+            attrs = {'sampling_rate': kwargs["fs"]}
+
+        dataset = xr.Dataset(data_vars=data_vars, attrs=attrs)
+
+        return cls(dataset, **kwargs)
 
 
     def compute_velocities(self):
