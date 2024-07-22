@@ -68,7 +68,7 @@ print(output)
 # Hz. Also, let's rotate them 135 degrees (northwest). Finally, let's add a
 # colorbar label.
 
-fig, ax = plt.subplots(figsize=(5,5))
+fig, ax = plt.subplots(figsize=(6,5))
 plot_directional_spectrum(
     output.directional_spectrum, ax=ax, levels=None, colorbar=True,
     axes_kw={"rmin": 0.1, "rmax": 1.2, "rstep": 0.2, "angle": 135},
