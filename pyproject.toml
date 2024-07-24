@@ -1,6 +1,6 @@
 [project]
 name = "ewdm"
-version = "0.4"
+version = "1.0"
 authors = [
   {name = "Daniel Peláez-Zapata", email="daniel.pelaez-zapata@ucdconnect.ie"},
 ]

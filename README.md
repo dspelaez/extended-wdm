@@ -2,13 +2,14 @@
 [![Python package](https://github.com/dspelaez/extended-wdm/actions/workflows/python-package.yml/badge.svg)](https://github.com/dspelaez/extended-wdm/actions/workflows/python-package.yml)
 [![PyPI version](https://badge.fury.io/py/ewdm.svg)](https://badge.fury.io/py/ewdm)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/dspelaez/extended-wdm/HEAD?labpath=notebooks)
+[![DOI](https://zenodo.org/badge/819790869.svg)](https://zenodo.org/doi/10.5281/zenodo.12805994)
 
 <img src="https://raw.githubusercontent.com/dspelaez/extended-wdm/main/docs/_static/logo.png" width="400">
 
 # EWDM: Extended Wavelet Directional Method
 
 Welcome to the GitHub repository for the Extended Wavelet Directional Method
-(EWDM) - a toolkit for estimating directional spectra  of ocean waves using the
+(EWDM) - a toolkit for estimating directional spectra of ocean waves using the
 Continuous Wavelet Transform (CWT).
 
 This algorithm is an extension of the original WDM proposed by [Donelan et al.
@@ -104,3 +105,8 @@ This will produce a plot like this:
 
 Consult the full documentation on [extended-wdm.readthedocs.io/](extended-wdm.readthedocs.io/)
 
+
+## How to cite this work
+
+If you find this package useful, please consider citing the package using the
+DOI: `10.5281/zenodo.12805995`
