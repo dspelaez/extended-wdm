@@ -11,7 +11,8 @@ def get_sampling_frequency(time: xr.DataArray, precision: int = 3) -> float:
 
     Args:
         time (xr.DataArray): Time data array.
-        precision (int, optional): Number of decimal places to round to. Defaults to 3.
+        precision (int, optional): Number of decimal places to round to.
+        Defaults to 3.
 
     Returns:
         float: Estimated sampling frequency.
