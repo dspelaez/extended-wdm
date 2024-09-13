@@ -59,11 +59,25 @@ class SpotterBuoysDataSource(object):
         data = pd.read_csv(
             self.fname, names=columns, header=None, skiprows=1
         )
-        # combine the desired date-time columns and convert them to datetime
+
+
+        # Format the 'msec' column to be three digits
+        data['msec'] = data['msec'].apply(lambda x: f'{int(x):03}')
+        # print(data['msec'])
+
+        # Combine the desired date-time columns and convert them to datetime
+        # Here, we concatenate the time components and ensure the millisecond part is correctly formatted
         data["time"] = pd.to_datetime(
-            data[columns[:7]].astype(str).agg(','.join, axis=1),
-            format="%Y,%m,%d,%H,%M,%S,%f"
+            data['year'].astype(str) + '-' +
+            data['month'].astype(str) + '-' +
+            data['day'].astype(str) + ' ' +
+            data['hour'].astype(str) + ':' +
+            data['min'].astype(str) + ':' +
+            data['sec'].astype(str) + '.' +
+            data['msec'],  # Concatenate using three-digit milliseconds
+            format="%Y-%m-%d %H:%M:%S.%f"  # Use .%f to parse the millisecond part
         )
+
         data = data.drop(columns=columns[:7])
 
         # convert to xarray and add metadata
