@@ -12,7 +12,7 @@ authors:
   - name:
         firstname: Frédéric
         surname: Dias
-  - orcid: 0000-0002-5123-4929
+    orcid: 0000-0002-5123-4929
     affiliation: "1, 2"
 affiliations:
  - name: École Normale Supérieure Paris-Saclay, France
