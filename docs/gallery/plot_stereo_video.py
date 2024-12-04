@@ -69,9 +69,8 @@ plt.show()
 # Computing directional wave spectra
 # ----------------------------------
 # 
-# Now, we are going to download the netCDF4 containing the streo-images data.
-# The the file will be downloaded and place into the data folder. This might
-# take a few minutes.
+# Now, we are going to download the netCDF4 containing the streo-images data and
+# place it into the data folder. This might take a few minutes.
 
 # check if the file is already cached
 if not os.path.exists(LOCAL_VIDEO_FILE):
@@ -106,12 +105,14 @@ titles = ["Young (1994)", "Pentagon", "10 random", "20 random"]
 # loop for each configuration
 for indices, title in zip((indices1, indices2, indices3, indices4), titles):
 
+    # pick the elevation time series from the image
     x = np.array([nc_obj["X"][i,j] for i,j in indices])
     y = np.array([nc_obj["Y"][i,j] for i,j in indices])
     eta = np.array([nc_obj["Z"][:8192,i,j] for i,j in indices])
     time = nc.num2date(nc_obj['time'][:8192], units=nc_obj["time"].units)
     elements = np.arange(len(x))
 
+    # create input dataset
     dataset = xr.Dataset(
         data_vars = {
             "surface_elevation": (["time", "element"], eta.T),
@@ -121,14 +122,14 @@ for indices, title in zip((indices1, indices2, indices3, indices4), titles):
         coords = {"time": time, "element": elements},
         attrs = {"sampling_rate": 10}
     )
-    print(dataset)
 
+    # run the ewdm.Arrays code and obtain the directional spectrum
     spec = ewdm.Arrays(dataset)
     output = spec.compute(
         cross_wavelet=True, solver="least-squares", kappa=36
     )
-    print(output)
 
+    # plot the results
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8,3.5))
     plot_directional_spectrum(
         output.directional_spectrum, ax=ax2, levels=None, colorbar=True,
@@ -141,3 +142,8 @@ for indices, title in zip((indices1, indices2, indices3, indices4), titles):
     )
     ax1.plot(x, y, "o", mec="indigo", mfc="w")
     ax1.set_title(title)
+
+# %%
+# There are clearly some differences between the chosen configuration. However,
+# the main wave direction is consistet the the reports of Guimaraes et al
+# (2020).
