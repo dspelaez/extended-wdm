@@ -1,5 +1,6 @@
 ---
-title: 'EWDM: Extended Wavelet Directional Method for estimating ocean waves directional spectra'
+title: 'EWDM: A wavelet-based method for estimating directional spectra of ocean
+waves'
 tags:
   - python
   - oceanography
