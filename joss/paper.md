@@ -3,7 +3,10 @@ title: 'EWDM: A wavelet-based method for estimating directional spectra of ocean
 waves'
 tags:
   - python
-  - oceanography
+  - physical oceanography
+  - ocean surface waves
+  - directional wave spectra
+  - wavelets
 authors:
   - name:
         firstname: Daniel

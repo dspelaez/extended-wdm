@@ -144,6 +144,7 @@ for indices, title in zip((indices1, indices2, indices3, indices4), titles):
     ax1.set_title(title)
 
 # %%
-# There are clearly some differences between the chosen configuration. However,
-# the main wave direction is consistet the the reports of Guimaraes et al
-# (2020).
+# There are clearly some differences between the chosen configurations. The
+# overal quality of the directional spectrum depends on the array distribution.
+# However, we confirm that the main wave direction obtained in all cases is
+# consistent with the reported by Guimaraes et al (2020).
