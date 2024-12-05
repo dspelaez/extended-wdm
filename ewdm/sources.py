@@ -60,13 +60,13 @@ class SpotterBuoysDataSource(object):
             self.fname, names=columns, header=None, skiprows=1
         )
 
-
-        # Format the 'msec' column to be three digits
+        # format the 'msec' column to be three digits
         data['msec'] = data['msec'].apply(lambda x: f'{int(x):03}')
         # print(data['msec'])
 
-        # Combine the desired date-time columns and convert them to datetime
-        # Here, we concatenate the time components and ensure the millisecond part is correctly formatted
+        # combine the desired date-time columns and convert them to datetime
+        # here, we concatenate the time components and ensure the
+        # millisecond part is correctly formatted
         data["time"] = pd.to_datetime(
             data['year'].astype(str) + '-' +
             data['month'].astype(str) + '-' +
@@ -74,8 +74,8 @@ class SpotterBuoysDataSource(object):
             data['hour'].astype(str) + ':' +
             data['min'].astype(str) + ':' +
             data['sec'].astype(str) + '.' +
-            data['msec'],  # Concatenate using three-digit milliseconds
-            format="%Y-%m-%d %H:%M:%S.%f"  # Use .%f to parse the millisecond part
+            data['msec'],  # concatenate using three-digit milliseconds
+            format="%Y-%m-%d %H:%M:%S.%f"  # use .%f to parse the millisec part
         )
 
         data = data.drop(columns=columns[:7])
