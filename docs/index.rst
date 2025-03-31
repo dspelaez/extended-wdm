@@ -62,10 +62,6 @@ wave spectra. We welcome contributions, feedback, and collaboration from the
 community to further enhance the capabilities of the Extended Wavelet
 Directional Method.
 
-
-.. warning::
-   This is an experimental version.
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
