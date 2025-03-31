@@ -59,6 +59,22 @@ pip install ewdm
 
 This will install the `ewdm` package along with its dependencies.
 
+## Running tests
+
+To install the necessary packages for development and testing, you can run the
+following command:
+
+```bash
+pip install -e '.[test]'
+```
+
+To run the tests, you can use the `pytest` framework by executing the following
+command:
+
+```bash
+pytest tests
+```
+
 
 ## Usage
 
