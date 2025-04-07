@@ -114,7 +114,7 @@ plot_directional_spectrum(
 
 This will produce a plot like this:
 
-<img src="notebooks/ewdm-quick-example.png" width="500">
+<img src="notebooks/ewdm-quick-example.png" width="800">
 
 
 ## Further examples
