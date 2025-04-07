@@ -20,7 +20,7 @@ Thank you for considering contributing to EWDM! We appreciate your interest in i
 If you encounter bugs, issues, or have suggestions for improvements, please open an issue o GitHub. Provide a clear description of the problem, steps to reproduce, expected behavior, and any relevant information.
 
 ## Contact
-The [discussion page](https://github.com/dspelaez/extended-wdm/discussion) can be used to ask questions and submit ideas.
+The [discussion page](https://github.com/dspelaez/extended-wdm/discussions) can be used to ask questions and submit ideas.
 
 The best place to report a bug or to propose any enhancements is the [issue tracker](https://github.com/dspelaez/extended-wdm/issues) of EWDM's Github repository.
 
