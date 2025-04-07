@@ -3,6 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/ewdm.svg)](https://badge.fury.io/py/ewdm)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/dspelaez/extended-wdm/HEAD?labpath=notebooks)
 [![DOI](https://zenodo.org/badge/819790869.svg)](https://zenodo.org/doi/10.5281/zenodo.12805994)
+[![status](https://joss.theoj.org/papers/3b59fa36efc62a871bfd48acb056670d/status.svg)](https://joss.theoj.org/papers/3b59fa36efc62a871bfd48acb056670d)
 
 <img src="https://raw.githubusercontent.com/dspelaez/extended-wdm/main/docs/_static/logo.png" width="400">
 
