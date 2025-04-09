@@ -9,8 +9,8 @@
 
 # EWDM: Extended Wavelet Directional Method
 
-Welcome to the GitHub repository for the Extended Wavelet Directional Method
-(EWDM) - a toolkit for estimating directional spectra of ocean waves using the
+Welcome to the GitHub repository for the **Extended Wavelet Directional Method
+(EWDM)** - a toolkit for estimating directional spectra of ocean waves using the
 Continuous Wavelet Transform (CWT).
 
 This algorithm is an extension of the original WDM proposed by [Donelan et al.
@@ -23,11 +23,11 @@ The wavelet-based methods have emerged as a practical alternative to the
 conventional Fourier-based techniques, particularly well-suited for the analysis
 of data from [Spotter buoys](https://www.sofarocean.com/products/spotter) as
 demonstrated by [Peláez-Zapata et al.
-2024](https://doi.org/10.1175/JTECH-D-23-0058.1) and from other triplet data
+(2024)](https://doi.org/10.1175/JTECH-D-23-0058.1) and from other triplet data
 such as wave slopes as shown by [Krogstad et al.
-2006](https://onepetro.org/IJOPE/article-abstract/28936/Wavelet-And-Local-Directional-Analysis-of-Ocean?redirectedFrom=fulltext).
+(2006)](https://onepetro.org/IJOPE/article-abstract/28936/Wavelet-And-Local-Directional-Analysis-of-Ocean?redirectedFrom=fulltext).
 
-Key features of the EWDM include:
+**Key features** of the **EWDM** include:
 
 * Implementation of the wavelet-based algorithms for extracting directional
   information from wave time series.
@@ -39,13 +39,13 @@ Key features of the EWDM include:
 * Documentation, examples, and comparison with conventional methods.
 
 
-Whether you are a researcher, student, or engineer in physical oceanography, the
-Extended Wavelet Directional Method provides a powerful, user-friendly toolkit
+Whether you are a researcher, student, or engineer in physical oceanography, 
+**EWDM** provides a powerful, user-friendly toolkit
 for in-depth analysis of directional ocean wave spectra. Join us in exploring
 the fascinating world of directional wave analysis and making meaningful
 contributions to the understanding of ocean wave dynamics. We welcome
 contributions, feedback, and collaboration from the community to further enhance
-the capabilities of the Extended Wavelet Directional Method.
+the capabilities of **EWDM**.
 
 # Getting Started
 
@@ -127,3 +127,13 @@ Consult the full documentation on [extended-wdm.readthedocs.io/](extended-wdm.re
 
 If you find this package useful, please consider citing the package using the
 DOI: `10.5281/zenodo.12805995`
+
+## How to contribute
+EWDM is an open-source package and we welcome feedback and contributions.
+
+You can open an issue in the github issues page if you:
+
+- find a bug in the package;
+- need some new features;
+- want some supports;
+- show your own examples.
