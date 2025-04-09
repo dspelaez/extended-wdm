@@ -3,6 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/ewdm.svg)](https://badge.fury.io/py/ewdm)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/dspelaez/extended-wdm/HEAD?labpath=notebooks)
 [![DOI](https://zenodo.org/badge/819790869.svg)](https://zenodo.org/doi/10.5281/zenodo.12805994)
+[![status](https://joss.theoj.org/papers/3b59fa36efc62a871bfd48acb056670d/status.svg)](https://joss.theoj.org/papers/3b59fa36efc62a871bfd48acb056670d)
 
 <img src="https://raw.githubusercontent.com/dspelaez/extended-wdm/main/docs/_static/logo.png" width="400">
 
@@ -59,6 +60,22 @@ pip install ewdm
 
 This will install the `ewdm` package along with its dependencies.
 
+## Running tests
+
+To install the necessary packages for development and testing, you can run the
+following command:
+
+```bash
+pip install -e '.[test]'
+```
+
+To run the tests, you can use the `pytest` framework by executing the following
+command:
+
+```bash
+pytest tests
+```
+
 
 ## Usage
 
@@ -98,7 +115,7 @@ plot_directional_spectrum(
 
 This will produce a plot like this:
 
-<img src="notebooks/cdip-example-directional-spectrum.png" width="500">
+<img src="notebooks/ewdm-quick-example.png" width="800">
 
 
 ## Further examples
