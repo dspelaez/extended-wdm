@@ -120,7 +120,7 @@ This will produce a plot like this:
 
 ## Further examples
 
-Consult the full documentation on [extended-wdm.readthedocs.io/](extended-wdm.readthedocs.io/)
+For a curated collection of examples, please refer to the full gallery in the documentation at [extended-wdm.readthedocs.io/](https://extended-wdm.readthedocs.io/en/latest/gallery.html)
 
 
 ## How to cite this work
