@@ -28,25 +28,25 @@ Welcome to extended-wdm package documentation!
 
 * So, the package, "Extended Wavelet Directional Method," extends the original
   WDM to incorporate single-point triplet data in addition to wave arrays
-   
+
 
 .. note::
 
    **Key features of the EWDM include:**
-      
+
    * Implementation of the wavelet-based algorithms for extracting directional
      information from wave time series.
-   
+
    * Improve estimation of wave directional distribution using KDE (Kernel
      Density Estimation).
-   
+
    * Tools for processing and visualising directional wave data.
-   
+
    * Powered by `xarray` labelled multi-dimensional arrays.
-   
+
    * Helper functions to handle commonly used data sources such as `SOFAR
      Spotter buoys`_ and `CDIP database`_.
-   
+
    * Documentation, examples, and comparison with conventional methods.
 
 .. _Donelan's: https://doi.org/10.1175/1520-0485(1996)026<1901:naotdp>2.0.co;2
@@ -69,6 +69,7 @@ Directional Method.
    getting_started
    maths
    gallery
+   contribute
 
 
 API Documentation
