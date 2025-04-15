@@ -95,19 +95,23 @@ This will produce a plot like this:
 
 ## Further examples
 
-For a curated collection of examples, please refer to the full gallery in the documentation at [extended-wdm.readthedocs.io/](https://extended-wdm.readthedocs.io/en/latest/gallery.html)
+For a curated collection of examples, please refer to the [Gallery](https://extended-wdm.readthedocs.io/en/latest/gallery.html) in the documentation.
 
 
 ## How to cite this work
 
 If you find this package useful, please consider citing the package using the DOI: `10.5281/zenodo.12805995`
 
+
 ## How to contribute
+
 EWDM is an open-source package and we welcome feedback and contributions.
 
-You can open an issue in the github issues page if you:
+You can open an issue in the GitHub issues page if you:
 
 - find a bug in the package;
 - need some new features;
 - want some supports;
 - show your own examples.
+
+Please refer to the [Contributing's guide](https://extended-wdm.readthedocs.io/en/latest/contribute.html) in the documentation for further information.
