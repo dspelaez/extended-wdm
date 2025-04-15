@@ -114,4 +114,4 @@ You can open an issue in the GitHub issues page if you:
 - want some supports;
 - show your own examples.
 
-Please refer to the [Contributing's guide](https://extended-wdm.readthedocs.io/en/latest/contribute.html) in the documentation for further information.
+Please refer to the [Contributing guide](https://extended-wdm.readthedocs.io/en/latest/contribute.html) in the documentation for further information.
