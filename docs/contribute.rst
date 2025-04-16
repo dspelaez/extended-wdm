@@ -19,12 +19,13 @@ Setting up the development environment
 
 2. **Create a virtual environment**
 
-   It's recommended to use a virtual environment to manage dependencies:
+   It is recommended to use a virtual environment to manage dependencies:
 
    .. code-block:: bash
 
-       conda create --name ewdm-dev python=3.9
+       conda create --name ewdm-dev python=3.8 # or higher
        conda activate ewdm-dev
+
 
 3. **Install dependencies**
 
@@ -88,7 +89,7 @@ We encourage contributors to add examples demonstrating the use of EWDM. To inte
    After adding your script, build the documentation to ensure that your example appears correctly in the gallery:
 
    .. code-block:: bash
-      
+
        make clean
        make html
 
@@ -133,7 +134,7 @@ To contribute to EWDM:
        git checkout -b feature/your-feature-name
 
 4. **Testing**
-  
+
    Write tests and make sure all tests are passed
 
    .. code-block:: bash

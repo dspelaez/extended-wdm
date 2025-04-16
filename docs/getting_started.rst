@@ -23,14 +23,13 @@ Installation
 Stable release
 ^^^^^^^^^^^^^^
 
-To install extended-wdm, run this command in your terminal:
+You can install EWDM using `pip`_. First, make sure you have Python 3.8 or higher installed.
 
 .. code-block:: console
 
     $ pip install ewdm
 
-This is the preferred method to install extended-wdm, as it will always install
-the most recent stable release.
+This is the preferred method to install EWDM, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -42,7 +41,7 @@ you through the process.
 From sources
 ^^^^^^^^^^^^
 
-The sources for extended-wdm can be downloaded from the `Github repo`_.
+The sources for EWDM can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
@@ -62,10 +61,12 @@ Once you have a copy of the source, you can install it with:
 
     $ python setup.py install
 
+Or using `pip`_:
+
+.. code-block:: console
+
+    $ pip install .
+
 
 .. _Github repo: https://github.com/dspelaez/extended-wdm
 .. _tarball: https://github.com/dspelaez/extended-wdm/tarball/master
-
-
-Conventions
------------

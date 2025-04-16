@@ -11,9 +11,9 @@
 
 Welcome to the GitHub repository for the **Extended Wavelet Directional Method (EWDM)** - a toolkit for estimating directional spectra of ocean waves using the Continuous Wavelet Transform (CWT).
 
-This algorithm is an extension of the original WDM proposed by [Donelan et al. (1985)](10.1175/1520-0485(1996)026<1901:naotdp>2.0.co;2) that was only suitable for spatially-distributed arrays of wave staffs. This extension allows the estimation of the directional wave spectrum for GPS wave buoys, pitch-roll-heave buoys and Acoustic Doppler Current Profilers.
+This package implements the algorithms of the original WDM proposed by [Donelan et al. (1985)](10.1175/1520-0485(1996)026<1901:naotdp>2.0.co;2) that are suitable for spatially-distributed arrays of wave staffs; as well as the algorithms presented by [Peláez-Zapata et al. (2024)](https://doi.org/10.1175/JTECH-D-23-0058.1) and [Krogstad et al. (2006)](https://onepetro.org/IJOPE/article-abstract/28936/Wavelet-And-Local-Directional-Analysis-of-Ocean?redirectedFrom=fulltext), for single-point triplets of wave-induced velocities, accelerations or slopes.
 
-The wavelet-based methods have emerged as a practical alternative to the conventional Fourier-based techniques, particularly well-suited for the analysis of data from [Spotter buoys](https://www.sofarocean.com/products/spotter) as demonstrated by [Peláez-Zapata et al. (2024)](https://doi.org/10.1175/JTECH-D-23-0058.1) and from other triplet data such as wave slopes as shown by [Krogstad et al. (2006)](https://onepetro.org/IJOPE/article-abstract/28936/Wavelet-And-Local-Directional-Analysis-of-Ocean?redirectedFrom=fulltext).
+Therefore, **EWDM** allows the estimation of the directional wave spectrum for variety of sources, including GPS-based buoys, pitch-roll-heave buoys, acoustic Doppler current profilers (ADCP) and sampled points from stereo-imaging recordings.
 
 
 **Key features** of the **EWDM** include:
@@ -28,18 +28,54 @@ The wavelet-based methods have emerged as a practical alternative to the convent
 * Documentation, examples, and comparison with conventional methods.
 
 
-Whether you are a researcher, student, or engineer in physical oceanography, **EWDM** provides a powerful, user-friendly toolkit for in-depth analysis of directional ocean wave spectra. Join us in exploring the fascinating world of directional wave analysis and making meaningful contributions to the understanding of ocean wave dynamics. We welcome contributions, feedback, and collaboration from the community to further enhance the capabilities of **EWDM**.
+Whether you are a researcher, student, or engineer in physical oceanography, **EWDM** provides a powerful, user-friendly toolkit for in-depth analysis of directional ocean wave spectra. We welcome contributions, feedback, and collaboration from the community to further enhance the capabilities of **EWDM**.
+
 # Getting Started
 
 ## Installation
 
-Package installation can be done using pip. First, make sure you have Python 3.8 or higher installed.
+### Stable release
+
+You can install EWDM using `pip`. First, make sure you have Python 3.8 or higher installed.
 
 ```bash
 pip install ewdm
 ```
 
-This will install the `ewdm` package along with its dependencies.
+This is the preferred method to install EWDM, as it will always install the most recent stable release.
+
+If you don't have `pip` installed, this [Python installation guide](http://docs.python-guide.org/en/latest/starting/installation/) can guide
+you through the process.
+
+
+### From sources
+
+The sources for EWDM can be downloaded from the [Github repo](https://github.com/dspelaez/extended-wdm).
+
+You can either clone the public repository:
+
+```bash
+git clone git://github.com/dspelaez/extended-wdm
+```
+
+Or download the [tarball](https://github.com/dspelaez/extended-wdm/tarball/master):
+
+```bash
+curl -OJL https://github.com/dspelaez/extended-wdm/tarball/master
+```
+
+Once you have a copy of the source, you can install it with:
+
+```bash
+python setup.py install
+```
+
+Or using `pip`:
+
+```bash
+pip install .
+```
+
 
 ## Running tests
 
