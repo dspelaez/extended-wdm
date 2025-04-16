@@ -11,7 +11,7 @@
 
 Welcome to the GitHub repository for the **Extended Wavelet Directional Method (EWDM)** - a toolkit for estimating directional spectra of ocean waves using the Continuous Wavelet Transform (CWT).
 
-This package implements the algorithms of the original WDM proposed by [Donelan et al. (1985)](10.1175/1520-0485(1996)026<1901:naotdp>2.0.co;2) that are suitable for spatially-distributed arrays of wave staffs; as well as the algorithms presented by [Peláez-Zapata et al. (2024)](https://doi.org/10.1175/JTECH-D-23-0058.1) and [Krogstad et al. (2006)](https://onepetro.org/IJOPE/article-abstract/28936/Wavelet-And-Local-Directional-Analysis-of-Ocean?redirectedFrom=fulltext), for single-point triplets of wave-induced velocities, accelerations or slopes.
+This package implements the algorithms of the original WDM proposed by [Donelan et al. (1985)](10.1175/1520-0485(1996)026<1901:naotdp>2.0.co;2) that are suitable for spatially-distributed arrays of wave staffs; as well as the algorithms presented by [Peláez-Zapata et al. (2024)](https://doi.org/10.1175/JTECH-D-23-0058.1) and [Krogstad et al. (2006)](https://onepetro.org/IJOPE/article-abstract/28936/Wavelet-And-Local-Directional-Analysis-of-Ocean?redirectedFrom=fulltext), for single-point triplets of wave-induced displacements, velocities, accelerations or slopes.
 
 Therefore, **EWDM** allows the estimation of the directional wave spectrum for variety of sources, including GPS-based buoys, pitch-roll-heave buoys, acoustic Doppler current profilers (ADCP) and sampled points from stereo-imaging recordings.
 

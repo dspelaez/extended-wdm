@@ -9,10 +9,18 @@ Estimating directional spectra from stereo-imaging
 Stereo-imaging has emerged as a unique measurement technique for obtaining
 precise directional information about wave fields. One of its key advantages
 lies in the direct estimation of directional wave spectra through
-three-dimensional Fourier analysis. The quality of the directional spectrum is
-intricately tied to the resolution of the images captured. Higher image
-resolution can provide insights into small-scale wave features, including the
-dynamics of growing waves and wave-breaking processes. However, it's important to note that certain large-scale wave features, such as long waves (e.g., swell), may fall beyond the camera's field of view. In such cases, alternative techniques may need to be considered. For example, one approach involves selecting several pixels from the image and extracting the time series of the surface elevation. This can then be used to construct the directional spectrum from the data.
+three-dimensional Fourier analysis.
+
+The quality of the directional spectrum is intricately tied to the resolution of
+the images captured. Higher image resolution can provide insights into
+small-scale wave features, including the dynamics of growing waves and
+wave-breaking processes.
+
+However, large-scale wave features, such as long waves (e.g., swell), may fall
+beyond the camera's field of view. In such cases, alternative techniques may
+need to be considered. For example, one approach involves selecting several
+pixels from the image and extracting the time series of the surface elevation.
+This can then be used to construct the directional spectrum from the data.
 
 This example uses data from `Guimaraes et al (2020)`_ taken at the Black Sea. We
 explore different results changing the number and distribution of pixels in the
