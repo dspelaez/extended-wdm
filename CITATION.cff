@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Peláez-Zapata"
+  given-names: "Daniel"
+  orcid: "https://orcid.org/0000-0001-5862-6194"
+- family-names: "Dias"
+  given-names: "Frédéric"
+  orcid: "https://orcid.org/0000-0002-5123-4929"
+title: "EWDM: A wavelet-based method for estimating directional spectra of ocean waves"
+version: 1.0
+doi: 10.5281/zenodo.12805995
+date-released: 2024-07-24
+url: "https://github.com/dspelaez/extended-wdm"
