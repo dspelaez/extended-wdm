@@ -215,6 +215,8 @@ print(moments)
 # number of components that can be extracted from buoy measurements.
 #
 def tfs_distribution(moments, smoothing=32):
+    """Implementation of the Truncated Fourier Series method"""
+
     dirs =  xr.Variable(dims=("direction"), data=np.arange(-180,180,5))
     D = (1/(2*np.pi)) * (
         1 +
@@ -242,8 +244,8 @@ print(D_tfs)
 # A more sophisticated way of obtaining the directional distribution
 # function :math:`D(f,\theta)` is by using a maximum entropy estimator.
 #
-# Following `Alves and Melo (1999)`_, the form of the directional distribution
-# function can be written as:
+# Following `Lygre and Krogstad (1983)`_ and `Alves and Melo (1999)`_,
+# the form of the directional distribution function can be written as:
 #
 # .. math:: D(f,\theta) = \frac{1}{2\pi} \left[
 #                   \frac{1 - \phi_1 c_1^* - \phi_2 c_2^*}
@@ -251,7 +253,7 @@ print(D_tfs)
 #               \right]
 #
 # where :math:`c_1` and :math:`c_2` are the complex representation of the
-# Fourier coeffients, i.e.,
+# Fourier coefficients, i.e.,
 #
 # .. math:: c_1(f) = a_1(f) + i b_1(f)
 # .. math:: c_2(f) = a_2(f) + i b_2(f)
@@ -261,9 +263,19 @@ print(D_tfs)
 # .. math:: \phi_1 = \frac{c_1 - c_2 c_1^*}{1 - |c_1|^2}
 # .. math:: \phi_2  = c_2 - c_1^* \phi_1
 #
+# It is worth noting that this is just one of the possible implementations
+# of MEM. There are other variations that might potentially produce better
+# results. For more details, see `Christie (2024)`_ and
+# `Simanesew et al. (2018)`_.
+#
+# .. _Lygre and Krogstad (1983): https://doi.org/10.1175/1520-0485(1986)016<2052:MEEOTD>2.0.CO;2
 # .. _Alves and Melo (1999): https://doi.org/10.1016/S0141-1187(99)00019-X
+# .. _Christie (2024): https://www.sciencedirect.com/science/article/pii/S0141118723003711?via%3Dihub
+# .. _Simanesew et al. (2018): https://doi.org/10.1175/JTECH-D-17-0007.1
 #
 def mem_distribution(moments, smoothing=32):
+    """Implementation of the Maximum Entropy Method"""
+
     dirs =  xr.Variable(dims=("direction"), data=np.arange(-180,180,5))
 
     c1 = moments["a1"] + 1j*moments["b1"]
@@ -296,6 +308,10 @@ print(D_mem)
 # Wavelet-based directional wave spectrum
 # ---------------------------------------
 #
+# Here, we use the `ewdm.Triplets` module to get an estimation of the
+# directional distribution function :math:`D(f,\theta)` using the
+# wavelet-based method applied over the buoy data.
+#
 spec = ewdm.Triplets(dataset)
 output = spec.compute()
 D_ewdm = output["directional_distribution"]
@@ -303,8 +319,11 @@ print(D_ewdm)
 
 
 # %%
-# Direactional distribution function
+# Directional distribution function
 # ----------------------------------
+#
+# The results for the directional distribution function :math:`D(f,\theta)`
+# obtained from the three different methods evaluated are shown side-by-side.
 #
 vmin, vmax = 0, 0.05
 axes_kw={"rmax": 0.8, "rstep": 0.2, "as_period": True}
@@ -331,10 +350,23 @@ _ = ax3.set(xlabel="", ylabel="", title="EWDM")
 # Directional wave spectrum
 # -------------------------
 #
+# Now, we show the corresponding directional wave spectra
+# :math:`E(f,\theta)` for each method. Recalling that this quantity is
+# constructed as:
+#
+# .. math:: E(f,\theta) = S(f) D(f,\theta)
+#
+# For the Fourier-based methods, the frequency spectrum :math:`S(f)` is
+# simply the Fourier transform of the surface elevation signal, i.e.,
+# :math:`E_{zz}(f)`, the auto-spectrum of :math:`z(t)`. For the wavelet
+# method, :math:`S(f)` is obtained time-averaging the squared
+# wavelet amplitudes. See `Directional distribution and directional spectrum <https://extended-wdm.readthedocs.io/en/latest/maths.html#directional-distribution-and-directional-spectrum>`_.
+#
+
+# compute the directional wave spectrum
 E_tfs = moments["a0"] * D_tfs
 E_mem = moments["a0"] * D_mem
 E_ewdm = output["directional_spectrum"]
-
 
 vmin, vmax = -3, 0
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(8,8/3), layout="constrained")
@@ -354,10 +386,42 @@ plot_directional_spectrum(
 # %%
 # Azimutally-integrated power spectrum
 # ------------------------------------
-# A quick comparison between azimutally-integrated wavelet power and Fourier-based
-# power density spectrum.
+# A quick comparison between azimutally-integrated wavelet power and
+# Fourier-based power density spectrum, :math:`S(f)`, is presented.
+#
+# This comparison reveals similarities. The wavelet spectrum inherently
+# offers lower frequency resolution compared to the Fourier spectrum,
+# thus resulting in a naturally smoother representation of the energy
+# distribution. This characteristic of the continuous wavelet transform
+# has been extensively discussed. See e.g., `Torrence and Compo (1998)`_.
+#
+# .. _Torrence and Compo (1998): http://journals.ametsoc.org/doi/10.1175/1520-0477(1998)079<0061:APGTWA>2.0.CO;2
 #
 fig, ax = plt.subplots()
 ax.loglog(moments["frequency"], moments["a0"], label="Fourier-based")
 output.frequency_spectrum.plot(ax=ax, ls="--", lw=2, label="Wavelet-based")
+ax.set(xlabel="$f$ [Hz]", ylabel="$S(f)$ [m$^2$/Hz]")
 ax.legend()
+
+# %%
+# Discussion and conclusion
+# -------------------------
+#
+# The comparison of three methods for estimating the directional wave
+# spectrum reveals distinct characteristics:
+#
+# - TFS is too broad, i.e., it  spreads too much the energy across the
+#   directions, which is inconsistent with previous observations.
+#
+# - MEM seems to be too narrow and shows spurious peaks. In addition, it
+#   tends to produce inconsistent bimodal distributions. For example, it
+#   identifies waves travelling south which appear to e unrealistic.
+#
+# - EWDM results appear consistent showing a smooth transition of wave
+#   energy across frequencies and directions.
+#
+# However, objectively evaluating the quality of these estimations is
+# challenging due to the lack of a ground truth reference. Consequently,
+# further research is imperative to enhance the understanding and
+# assessment of these methods. Despite this limitation, EWDM exhibits promise
+# in providing more reliable estimates for the directional wave spectrum.
