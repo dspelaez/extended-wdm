@@ -381,7 +381,7 @@ plot_directional_spectrum(
 )
 plot_directional_spectrum(
     E_ewdm, ax=ax3, levels=None, colorbar=True,
-    cbar_kw={"label": "$E(f,\\theta)\\;\\mathrm{[m^2 Hz^{-1} deg{-1}]}$"},
+    cbar_kw={"label": "$E(f,\\theta)\\;\\mathrm{[m^2 Hz^{-1} deg^{-1}]}$"},
     axes_kw=axes_kw, vmin=vmin, vmax=vmax
 )
 _ = ax1.set(xlabel="", title="TFS")
