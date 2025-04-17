@@ -31,7 +31,7 @@ Therefore, **EWDM** allows the estimation of the directional wave spectrum for v
 Whether you are a researcher, student, or engineer in physical oceanography, **EWDM** provides a powerful, user-friendly toolkit for in-depth analysis of directional ocean wave spectra. We welcome contributions, feedback, and collaboration from the community to further enhance the capabilities of **EWDM**.
 
 
-# Related packages
+# Related projects
 
 Several tools complement the functionality of **EWDM** in the analysis of ocean
 wave data. Some of the most relevant projects are:
