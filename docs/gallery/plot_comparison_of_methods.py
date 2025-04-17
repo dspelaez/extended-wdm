@@ -325,8 +325,8 @@ print(D_ewdm)
 # The results for the directional distribution function :math:`D(f,\theta)`
 # obtained from the three different methods evaluated are shown side-by-side.
 #
-vmin, vmax = 0, 0.05
-axes_kw={"rmax": 0.8, "rstep": 0.2, "as_period": True}
+vmin, vmax = 0.002, 0.048
+axes_kw={"rmax": 1.2, "rstep": 0.2, "as_period": True}
 
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(8,8/3))
 plot_directional_spectrum(
@@ -368,20 +368,25 @@ E_tfs = moments["a0"] * D_tfs
 E_mem = moments["a0"] * D_mem
 E_ewdm = output["directional_spectrum"]
 
-vmin, vmax = -3, 0
+vmin, vmax = 0.0, 0.15
+axes_kw={"rmax": 0.35, "rstep": 0.07, "as_period": True}
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(8,8/3), layout="constrained")
 plot_directional_spectrum(
-    E_tfs.pipe(np.log10), ax=ax1, levels=None, colorbar=False,
+    E_tfs, ax=ax1, levels=None, colorbar=False,
     axes_kw=axes_kw, vmin=vmin, vmax=vmax
 )
 plot_directional_spectrum(
-    E_mem.pipe(np.log10), ax=ax2, levels=None, colorbar=False,
+    E_mem, ax=ax2, levels=None, colorbar=False,
     axes_kw=axes_kw, vmin=vmin, vmax=vmax
 )
 plot_directional_spectrum(
-    E_ewdm.pipe(np.log10), ax=ax3, levels=None, colorbar=True,
+    E_ewdm, ax=ax3, levels=None, colorbar=True,
+    cbar_kw={"label": "$E(f,\\theta)\\;\\mathrm{[m^2 Hz^{-1} deg{-1}]}$"},
     axes_kw=axes_kw, vmin=vmin, vmax=vmax
 )
+_ = ax1.set(xlabel="", title="TFS")
+_ = ax2.set(xlabel="", ylabel="", title="MEM")
+_ = ax3.set(xlabel="", ylabel="", title="EWDM")
 
 # %%
 # Azimutally-integrated power spectrum
