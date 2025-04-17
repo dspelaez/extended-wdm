@@ -31,29 +31,6 @@ Therefore, **EWDM** allows the estimation of the directional wave spectrum for v
 Whether you are a researcher, student, or engineer in physical oceanography, **EWDM** provides a powerful, user-friendly toolkit for in-depth analysis of directional ocean wave spectra. We welcome contributions, feedback, and collaboration from the community to further enhance the capabilities of **EWDM**.
 
 
-# Related projects
-
-Several tools complement the functionality of **EWDM** in the analysis of ocean
-wave data. Some of the most relevant projects are:
-
-- [`WAFO`](https://www.maths.lth.se/matstat/wafo/) provides advanced statistical
-  and engineering analysis of wave fields and wave-induced loads.
-
-- [`FOWD`](https://github.com/dionhaefner/FOWD) offers a rich dataset of wave
-  parameters tailored for machine learning applications. It also provides
-  routines to compute frequently used wave parameters.
-
-- [`DIWASP`](https://github.com/metocean/diwasp) implements classical
-  Fourier-based methods for directional spectrum estimation. 
-
-- Special mention to modern Python packages like
-  [`wavespectra`](https://github.com/wavespectra/wavespectra) and
-  [`oceanwaves-python`](https://github.com/openearth/oceanwaves-python), that
-  support spectral data manipulation and visualization. While these tools do not
-  estimate directional spectra from raw measurements, they can be integrated
-  with **EWDM** to enhance wave data processing workflows.
-
-
 # Getting Started
 
 ## Installation
@@ -156,6 +133,30 @@ This will produce a plot like this:
 ## Further examples
 
 For a curated collection of examples, please refer to the [Gallery](https://extended-wdm.readthedocs.io/en/latest/gallery.html) in the documentation.
+
+
+## Related projects
+
+Several tools complement the functionality of **EWDM** in the analysis of ocean
+wave data. Some of the most relevant projects are:
+
+- [`WAFO`](https://www.maths.lth.se/matstat/wafo/) provides advanced statistical
+  and engineering analysis of wave fields and wave-induced loads.
+
+- [`FOWD`](https://github.com/dionhaefner/FOWD) offers a rich dataset of wave
+  parameters tailored for machine learning applications. It also provides
+  routines to compute frequently used wave parameters.
+
+- [`DIWASP`](https://github.com/metocean/diwasp) implements classical
+  Fourier-based methods for directional spectrum estimation. 
+
+- Special mention to modern Python packages like
+  [`wavespectra`](https://github.com/wavespectra/wavespectra) and
+  [`oceanwaves-python`](https://github.com/openearth/oceanwaves-python), that
+  support spectral data manipulation and visualization. While these tools do not
+  estimate directional spectra from raw measurements, they can be integrated
+  with **EWDM** to enhance wave data processing workflows.
+
 
 
 ## How to cite this work
