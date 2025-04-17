@@ -6,6 +6,24 @@
 Comparison of different methods
 ===============================
 
+It is a common practice to express the directional wave spectrum,
+:math:`E(f,\\theta)`, as the product of two functions:
+
+    .. math:: E(f,\\theta) = S(f) D(f,\\theta)
+
+where :math:`S(f)` is the frequency spectrum and :math:`D(f,\\theta)` is the
+directional distribution function. The problem basically consist of
+finding :math:`D(f,\\theta)`.
+
+This section compares different methods for estimating the directional
+distribution :math:`D(f,\\theta)` and the the directional wave
+spectra :math:`E(f,\\theta)`. We compare the wavelet-based directional method
+implemented in EWDM with two of the conventional methods based on Fourier
+spectral analysis, namely Truncated Fourier Series (TSF) and Maximum Entropy
+Method (MEM).
+
+The results are visualised and compared to understand the performance and
+differences between these methods.
 """
 
 import numpy as np
@@ -21,9 +39,15 @@ from ewdm.plots import plot_directional_spectrum
 import warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-# %% 
+# %%
 # Load sample dataset
 # ---------------------------------------
+# For this example, were use data from a Spotter buoy deployed off
+# the west coast of Ireland in August 2020. In particular, we are using
+# a sample of 30 minutes.
+#
+# The dataset contains the two horizontal wave-induced displacements and
+# the vertical sea surface elevation.
 #
 spotter = SpotterBuoysDataSource("../../data/displacement.csv")
 dataset = (
@@ -32,6 +56,12 @@ dataset = (
     .sel(time=slice("2020-08-20 10:00", "2020-08-20 10:30"))
 )
 print(dataset)
+
+# %%
+# Let's plot a subsample of 5 minutes of these time series to have
+# an idea on what they look like. As it can be seen, the amplitude of
+# the wave-induced buoy movement, in both the horizontal and vertical
+# coordinates, is about 3-4 metres.
 
 # plot time series of the first 5 minutes
 fig, (ax1, ax2, ax3) = plt.subplots(
@@ -46,10 +76,52 @@ _ = ax2.set(xlabel="", ylabel="$x(t)$ [m]")
 _ = ax3.set(xlabel="", ylabel="$y(t)$ [m]")
 
 
-# %% 
+# %%
 # Classic directional spectral analysis
 # -------------------------------------
+# The following class implements the conventional cross-spectral analysis
+# using Fourier transform. This class takes in a dataset containing eastward
+# and northward displacements along with the surface elevation data. The
+# input parameters are sampling frequency of the time series and number of
+# Fourier components for analysis.
 #
+# Considering the three time series, :math:`x(t)`, :math:`y(t)` and
+# :math:`z(t)` (We normally use :math:`\eta(t)` for the vertical but it is
+# changed here to :math:`z(t)` for simplicity and convenience), the
+# cross-spectral matrix is computed as:
+#
+# .. math:: \Phi(f) = \begin{bmatrix}
+#                        S_{xx} & S_{xy} & S_{xz} \\
+#                        S_{yx} & S_{yy} & S_{yz} \\
+#                        S_{zx} & S_{zy} & S_{zz}
+#                     \end{bmatrix}
+#
+# where :math:`S_{xy}(f)` is the Fourier cross-spectrum between
+# :math:`x(t)` and :math:`y(t)`, respectively.
+#
+# Each cross-spectrum can be written in terms of a real (co-spectrum)
+# and an imaginary (quad-spectrum) component:
+#
+# .. math:: S_{xy}(f) = C_{xy} + i Q_{xy}
+#
+# The auto-spectrum is the cross-spectrum of the same signal, and can be
+# written as :math:`E_{xx}(f) = S_{xx} S_{xx}^*`, where :math:`*`
+# denotes a complex conjugate.
+#
+# For typical buoy recording of wave-induced displacements, the circular
+# moments can be written in terms of these auto-, co-, and quad-spectra, like:
+#
+# .. math:: a_0 = S_{zz}(f)
+# .. math:: a_1 = \frac{Q_{xz}}{\sqrt{E_{zz} (E_{xx} + E_{yy})}}
+# .. math:: a_2 = \frac{Q_{yz}}{\sqrt{E_{zz} (E_{xx} + E_{yy})}}
+# .. math:: b_1 = \frac{E_{xx} - E_{yy}}{E_{xx} + E_{yy}}
+# .. math:: b_2 = \frac{2 C_{xy}}{E_{xx} + E_{yy}}
+#
+# See `Kuik et al. (1988)`_ and Appendix C in `Peláez-Zapata et al. (2024)`_ for further details.
+#
+# .. _Kuik et al. (1988): https://doi.org/10.1175/1520-0485(1988)018<1020:AMFTRA>2.0.CO;2
+# .. _Peláez-Zapata et al. (2024): https://theses.fr/2024UPASM004
+
 class ClassicSpectralAnalysis(object):
     """This class implements the classic directional spectral analysis"""
 
@@ -106,7 +178,7 @@ class ClassicSpectralAnalysis(object):
 
         return  xr.Dataset(
             {
-                "a0": Phi["Szz"],
+                "a0": Ezz,
                 "a1": Qxz / np.sqrt(Ezz * (Exx + Eyy)),
                 "b1": Qyz / np.sqrt(Ezz * (Exx + Eyy)),
                 "a2": (Exx - Eyy) / (Exx + Eyy),
@@ -119,20 +191,33 @@ csp = ClassicSpectralAnalysis(dataset, fs=dataset.sampling_rate)
 
 # computing the cross-spectral matrix
 Phi = csp.cross_spectral_matrix()
+print("\nThe cross-spectra matrix is:\n" + 28*"-")
 print(Phi)
 
 # computing the directional moments, aka first-five Fourier coefficients
 moments = csp.directional_moments(Phi)
+print("\nThe circular moments are:\n" + 25*"-")
 print(moments)
 
 
-# %% 
+# %%
 # Truncated Fourier Series
 # ------------------------
+#
+# The most straightforward way of obtaining the directional distribution
+# function :math:`D(f,\theta)` is by expanding in Fourier series:
+#
+# .. math:: D(f,\theta) = \frac{1}{2\pi} \left[ 1 + \sum_{n=1}^{N}
+#                a_n(f) \cos n\theta + b_n(f) \sin n\theta
+#           \right]
+#
+# This Fourier series is truncated to :math:`N=2` because it is the maximum
+# number of components that can be extracted from buoy measurements.
+#
 def tfs_distribution(moments, smoothing=32):
     dirs =  xr.Variable(dims=("direction"), data=np.arange(-180,180,5))
-    D = (
-        1/2 +
+    D = (1/(2*np.pi)) * (
+        1 +
         moments["a1"] * np.cos(np.radians(dirs)) +
         moments["b1"] * np.sin(np.radians(dirs)) +
         moments["a2"] * np.cos(2*np.radians(dirs)) +
@@ -150,9 +235,34 @@ D_tfs = tfs_distribution(moments, smoothing=2)
 print(D_tfs)
 
 
-# %% 
+# %%
 # Maximum Entropy Method
 # ----------------------
+#
+# A more sophisticated way of obtaining the directional distribution
+# function :math:`D(f,\theta)` is by using a maximum entropy estimator.
+#
+# Following `Alves and Melo (1999)`_, the form of the directional distribution
+# function can be written as:
+#
+# .. math:: D(f,\theta) = \frac{1}{2\pi} \left[
+#                   \frac{1 - \phi_1 c_1^* - \phi_2 c_2^*}
+#                        { |1 - \phi_1 e^{-i\theta} - \phi_2 e^{-i2\theta}|^2 }
+#               \right]
+#
+# where :math:`c_1` and :math:`c_2` are the complex representation of the
+# Fourier coeffients, i.e.,
+#
+# .. math:: c_1(f) = a_1(f) + i b_1(f)
+# .. math:: c_2(f) = a_2(f) + i b_2(f)
+#
+# and
+#
+# .. math:: \phi_1 = \frac{c_1 - c_2 c_1^*}{1 - |c_1|^2}
+# .. math:: \phi_2  = c_2 - c_1^* \phi_1
+#
+# .. _Alves and Melo (1999): https://doi.org/10.1016/S0141-1187(99)00019-X
+#
 def mem_distribution(moments, smoothing=32):
     dirs =  xr.Variable(dims=("direction"), data=np.arange(-180,180,5))
 
@@ -182,7 +292,7 @@ D_mem = mem_distribution(moments, smoothing=2)
 print(D_mem)
 
 
-# %% 
+# %%
 # Wavelet-based directional wave spectrum
 # ---------------------------------------
 #
@@ -192,7 +302,7 @@ D_ewdm = output["directional_distribution"]
 print(D_ewdm)
 
 
-# %% 
+# %%
 # Direactional distribution function
 # ----------------------------------
 #
@@ -209,7 +319,7 @@ plot_directional_spectrum(
     axes_kw=axes_kw, vmin=vmin, vmax=vmax
 )
 plot_directional_spectrum(
-    D_ewdm, ax=ax3, levels=None, colorbar=True, 
+    D_ewdm, ax=ax3, levels=None, colorbar=True,
     cbar_kw={"label": "$D(f,\\theta)$"},
     axes_kw=axes_kw, vmin=vmin, vmax=vmax
 )
@@ -217,7 +327,7 @@ _ = ax1.set(xlabel="", title="TFS")
 _ = ax2.set(xlabel="", ylabel="", title="MEM")
 _ = ax3.set(xlabel="", ylabel="", title="EWDM")
 
-# %% 
+# %%
 # Directional wave spectrum
 # -------------------------
 #
@@ -241,7 +351,7 @@ plot_directional_spectrum(
     axes_kw=axes_kw, vmin=vmin, vmax=vmax
 )
 
-# %% 
+# %%
 # Azimutally-integrated power spectrum
 # ------------------------------------
 # A quick comparison between azimutally-integrated wavelet power and Fourier-based

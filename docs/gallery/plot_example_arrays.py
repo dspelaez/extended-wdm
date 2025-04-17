@@ -6,7 +6,7 @@
 Donelan `run82` test case
 =========================
 
-This example shows `ewdm.Arrays` in action. We use the run62 as test case. More
+This example shows `ewdm.Arrays` in action. We use the run82 as test case. More
 information about this test case can be found in Donelan et al. 2015
 """
 

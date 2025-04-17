@@ -51,9 +51,6 @@ Numerous software tools are available for analysing ocean wave data, each design
 Modern Python-based tools, such as [`wavespectra`](https://github.com/wavespectra/wavespectra) and [`oceanwaves-python`](https://github.com/openearth/oceanwaves-python), provide an abstraction layer for typical directional wave spectra manipulation. These packages provide functionalities for common operations, such as reading and writing spectral data from numerical models (e.g., SWAN, WAVEWATCH III) and wave instruments (e.g., Spotter buoys, TRIAXYS, Datawell), spectral partitioning, estimation of spectral parameters, standard conversions and advanced plotting. They do not incorporate, however, algorithms for estimating the directional wave spectrum from raw wave measurements. EWDM complements the ecosystem, providing routines for estimating the directional wave spectrum directly from measurements of wave time series. The outputs obtained from EWDM can potentially be integrated with these tools to broaden its functionalities, opening up new possibilities to the scientific community.
 
 
-# Practical application
-
-
 # Acknowledgements
 
 This work was funded by the European Research Council (ERC) under the EU Horizon 2020 research and innovation program (Grant Agreement 833125- HIGHWAVE) and by the Centre National d'Études Spatiales (CNES) under the project ARANSAT. DPZ would like to thank the maintainers and developers of the open-source scientific Python ecosystem for making data processing and visualization more efficient. DPZ is grateful to the Navier (ENS Paris-Saclay) and Stokes (University College Dublin) teams for the interesting discussions.
