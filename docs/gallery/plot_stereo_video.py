@@ -95,9 +95,12 @@ nc_obj = nc.Dataset(LOCAL_VIDEO_FILE)
 # %%
 # 
 # To pick the pixels, we define the corresponding indices. We are going to
-# evaluate four different configurations. 1) The optimal array proposed by Young
-# et al (1994), 2) A simple pentagon, 3) 10 random points and 4) 20 random
-# points.
+# evaluate four different configurations. 
+#
+# - The optimal array proposed by Young et al (1994).
+# - A simple pentagon.
+# - 10 random points.
+# - 20 random points.
 
 indices1 = [
     (95,95), (95,175), (95,15), (175,15), (15,15),
