@@ -42,7 +42,7 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 # %%
 # Load sample dataset
 # ---------------------------------------
-# For this example, were use data from a Spotter buoy deployed off
+# For this example, we use data from a Spotter buoy deployed off
 # the west coast of Ireland in August 2020. In particular, we are using
 # a sample of 30 minutes.
 #
@@ -108,8 +108,9 @@ _ = ax3.set(xlabel="", ylabel="$y(t)$ [m]")
 # written as :math:`E_{xx}(f) = S_{xx} S_{xx}^*`, where :math:`*`
 # denotes a complex conjugate.
 #
-# For typical buoy recording of wave-induced displacements, the circular
-# moments can be written in terms of these auto-, co-, and quad-spectra, like:
+# For typical buoy recordings, e.g., three dimensional wave-induced
+# displacements, the circular moments can be written in terms of these auto-,
+# co-, and quad-spectra, like:
 #
 # .. math:: a_0 = S_{zz}(f)
 # .. math:: a_1 = \frac{Q_{xz}}{\sqrt{E_{zz} (E_{xx} + E_{yy})}}
@@ -325,8 +326,8 @@ print(D_ewdm)
 # The results for the directional distribution function :math:`D(f,\theta)`
 # obtained from the three different methods evaluated are shown side-by-side.
 #
-vmin, vmax = 0.002, 0.048
-axes_kw={"rmax": 1.2, "rstep": 0.2, "as_period": True}
+vmin, vmax = 0.002, 0.028
+axes_kw={"rmax": 0.8, "rstep": 0.2, "as_period": True}
 
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(8,8/3))
 plot_directional_spectrum(
