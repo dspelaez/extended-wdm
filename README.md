@@ -45,7 +45,7 @@ pip install ewdm
 
 This is the preferred method to install EWDM, as it will always install the most recent stable release.
 
-If you don't have `pip` installed, this [Python installation guide](http://docs.python-guide.org/en/latest/starting/installation/) can guide
+If you don't have `pip` installed, these [Python installation instructions](http://docs.python-guide.org/en/latest/starting/installation/) can guide
 you through the process.
 
 

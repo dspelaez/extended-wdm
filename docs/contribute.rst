@@ -107,9 +107,13 @@ It is also possible to add standalone Jupyter Notebooks.
 
    Develop a notebook that showcases a specific use case or analysis using EWDM.
 
-2. **Add to the `notebooks/` directory**
+2. **Add them to the `notebooks/` directory**
 
    Place your notebook in the `notebooks/` directory of the repository.
+
+3. **Run them in the cloud**
+
+    You can run the Jupyter Notebooks in the cloud using `Binder <https://mybinder.org/v2/gh/dspelaez/extended-wdm/HEAD?labpath=notebooks>`_. Wait for Binder to launch and then navigate to the desired `.ipynb` file in the Jupyter interface or create a new one. Remember that Binder sessions are temporary, so download your notebooks to keep changes.
 
 
 Contribution workflow
