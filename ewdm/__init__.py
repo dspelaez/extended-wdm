@@ -6,7 +6,7 @@
 
 __author__ = """Daniel Pelaez-Zapata"""
 __email__ = 'daniel.pelaez-zapata@proton.me'
-__version__ = '1.0'
+__version__ = '1.1'
 
 # from . import fourier
 from . import helpers

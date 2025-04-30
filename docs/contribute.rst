@@ -113,7 +113,9 @@ It is also possible to add standalone Jupyter Notebooks.
 
 3. **Run them in the cloud**
 
-    You can run the Jupyter Notebooks in the cloud using `Binder <https://mybinder.org/v2/gh/dspelaez/extended-wdm/HEAD?labpath=notebooks>`_. Wait for Binder to launch and then navigate to the desired `.ipynb` file in the Jupyter interface or create a new one. Remember that Binder sessions are temporary, so download your notebooks to keep changes.
+    - You can run the Jupyter Notebooks in the cloud using `Binder <https://mybinder.org/v2/gh/dspelaez/extended-wdm/HEAD?labpath=notebooks>`_.
+    - Wait for Binder to launch and then navigate to the desired `.ipynb` file in the Jupyter interface or create a new one.
+    - Binder sessions are temporary, so download your notebooks to keep changes.
 
 
 Contribution workflow
