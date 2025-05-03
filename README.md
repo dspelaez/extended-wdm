@@ -161,7 +161,22 @@ wave data. Some of the most relevant projects are:
 
 ## How to cite this work
 
-If you find this package useful, please consider citing the package using the DOI: `10.5281/zenodo.12805995`
+If you find this software useful, please cite it using the DOI: [`10.21105/joss.07942`](https://doi.org/10.21105/joss.07942) or copy the following `bibtex` entry:
+
+```
+@article{Peláez-Zapata2025,
+  doi = {10.21105/joss.07942},
+  url = {https://doi.org/10.21105/joss.07942},
+  year = {2025},
+  publisher = {The Open Journal},
+  volume = {10},
+  number = {109},
+  pages = {7942},
+  author = {Daniel Peláez-Zapata and Frédéric Dias},
+  title = {EWDM: A wavelet-based method for estimating directional spectra of ocean waves},
+  journal = {Journal of Open Source Software}
+}
+```
 
 
 ## How to contribute
