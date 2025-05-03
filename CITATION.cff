@@ -8,7 +8,7 @@ authors:
   given-names: "Frédéric"
   orcid: "https://orcid.org/0000-0002-5123-4929"
 title: "EWDM: A wavelet-based method for estimating directional spectra of ocean waves"
-version: 1.0
-doi: 10.5281/zenodo.12805995
-date-released: 2024-07-24
+version: 1.1
+doi: https://doi.org/10.21105/joss.07942
+date-released: 2025-05-02
 url: "https://github.com/dspelaez/extended-wdm"
