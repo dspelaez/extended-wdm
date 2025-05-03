@@ -164,7 +164,7 @@ wave data. Some of the most relevant projects are:
 If you find this software useful, please cite it using the DOI: [`10.21105/joss.07942`](https://doi.org/10.21105/joss.07942) or copy the following `bibtex` entry:
 
 ```
-@article{Peláez-Zapata2025,
+@article{Pelaez-Zapata2025,
   doi = {10.21105/joss.07942},
   url = {https://doi.org/10.21105/joss.07942},
   year = {2025},
