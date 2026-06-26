@@ -16,3 +16,4 @@ from . import plots
 from . import sources
 from . import wavelets
 from .main import Triplets, Arrays
+from .multiaperture import MultiApertureArrays

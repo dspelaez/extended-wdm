@@ -57,6 +57,46 @@ VARIABLE_NAMES = {
          'long_name': 'Omnidirectional inverse-phase-speed wave spectrum Q(nu)',
          'units': 'm^3/s'
      },
+     'directional_spectrum_f': {
+         'standard_name': 'sea_surface_directional_wave_spectrum',
+         'long_name': 'Directional wave energy density spectrum F(f, theta)',
+         'units': 'm^2/Hz/degrees'
+     },
+     'directional_spectrum_k': {
+         'standard_name': 'sea_surface_wavenumber_directional_wave_spectrum',
+         'long_name': 'Directional wavenumber wave spectrum Psi(k, theta)',
+         'units': 'm^4/rad'
+     },
+     'directional_spectrum_nu': {
+         'standard_name': 'sea_surface_inverse_phase_speed_directional_wave_spectrum',
+         'long_name': 'Directional inverse-phase-speed wave spectrum Q(nu, theta)',
+         'units': 'm^4/(s^2 rad)'
+     },
+     'mean_direction': {
+         'standard_name': 'sea_surface_wave_mean_direction',
+         'long_name': 'Energy-weighted mean wave direction',
+         'units': 'degrees'
+     },
+     'directional_spread': {
+         'standard_name': 'sea_surface_wave_directional_spread',
+         'long_name': 'Energy-weighted directional spread',
+         'units': 'degrees'
+     },
+     'lh_direction': {
+         'standard_name': 'sea_surface_wave_longuet_higgins_direction',
+         'long_name': 'Longuet-Higgins first-moment mean direction',
+         'units': 'degrees'
+     },
+     'sign_reference': {
+         'standard_name': 'sea_surface_wave_sign_reference_direction',
+         'long_name': 'Unwrapped sign-reference direction',
+         'units': 'degrees'
+     },
+     'var_eta': {
+         'standard_name': 'sea_surface_elevation_variance',
+         'long_name': 'Sea surface elevation variance (m0)',
+         'units': 'm^2'
+     },
     'surface_elevation': {
         'standard_name': 'sea_surface_wave_elevation',
         'long_name': 'Sea surface wave elevation',

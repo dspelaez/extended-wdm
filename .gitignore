@@ -1,5 +1,6 @@
 .gitignore
 .DS_Store
+docs/figure_scripts/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -164,3 +165,11 @@ cython_debug/
 
 # stereo-video gallery download cache (~1.3 GB, fetched at build time)
 data/stereo-video.nc
+docs/data
+
+# scoped gallery preview build + editor settings
+docs/_gallery_preview/
+.vscode/
+
+# peeled-off follow-up work (array directional estimators), re-applied after multiaperture merges
+.followup/
