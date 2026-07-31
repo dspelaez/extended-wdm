@@ -457,8 +457,12 @@ class Arrays(_BaseClass):
         data_std = _dataset["surface_elevation"].std("time")
         power = np.abs(coeffs) ** 2
         if self.normalise:
-            wavelet_energy = power.mean("time").integrate("frequency")**0.5
-            mean_power = (power * data_std / wavelet_energy).mean("element")
+            # rescale so that the integral of the spectrum equals the
+            # surface-elevation variance: int <|W|^2>_t df -> sigma^2.
+            # The factor is variance / wavelet-energy (sigma^2 / E), not
+            # sigma / sqrt(E), which would only be exact when E == sigma^2.
+            wavelet_energy = power.mean("time").integrate("frequency")
+            mean_power = (power * data_std**2 / wavelet_energy).mean("element")
         else:
             mean_power = power.mean("element")
 
@@ -834,8 +838,12 @@ class Triplets(_BaseClass):
             )
             power = np.abs(Wzz)**2
             if self.normalise:
-                wavelet_energy = power.mean("time").integrate("frequency")**0.5
-                return power * data_std / wavelet_energy.item()
+                # rescale so that the integral of the spectrum equals the
+                # surface-elevation variance: int <|W|^2>_t df -> sigma^2.
+                # The factor is variance / wavelet-energy (sigma^2 / E), not
+                # sigma / sqrt(E), which would only be exact when E == sigma^2.
+                wavelet_energy = power.mean("time").integrate("frequency")
+                return power * data_std**2 / wavelet_energy.item()
             else:
                 return power
 
